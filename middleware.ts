@@ -6,7 +6,7 @@ export default withAuth({
       if (!token) return false;
       
       const role = (token.role as string || '').toUpperCase();
-      const path = req.nextUrl.pathname;
+      const path = req.nextUrl.pathname.replace(/\/$/, '') || '/';
       
       // 1. Dashboard chính (/admin) cho phép tất cả các tài khoản đã đăng nhập
       if (path === '/admin') {
