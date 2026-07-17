@@ -137,3 +137,23 @@ export async function deletePartner(id: string) {
     return { success: false, error: error.message || 'Lỗi xóa đối tác' };
   }
 }
+
+export async function getPartnerByEmail(email: string) {
+  if (!process.env.DATABASE_URL) {
+    return PARTNERS_DATA.find(p => p.email?.toLowerCase() === email.toLowerCase()) || null;
+  }
+  try {
+    return await prisma.partner.findFirst({
+      where: {
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
+      },
+      include: { products: true },
+    });
+  } catch (error) {
+    console.error(`❌ Failed to fetch partner by email ${email}:`, error);
+    return PARTNERS_DATA.find(p => p.email?.toLowerCase() === email.toLowerCase()) || null;
+  }
+}
