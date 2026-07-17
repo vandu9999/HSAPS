@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { signIn } from 'next-auth/react';
 import {
   Lock,
@@ -53,59 +53,7 @@ function LoginContent() {
     isDbConnected().then(connected => setDbConnected(connected));
   }, []);
 
-  // ==========================================
-  // GOOGLE ONE TAP / QUICK LOGIN SUGGESTION
-  // ==========================================
-  const [showQuickLogin, setShowQuickLogin] = useState(false);
-  const [quickLoginAccount, setQuickLoginAccount] = useState<{ name: string; email: string; avatar: string } | null>(null);
-
-  useEffect(() => {
-    // Show quick login prompt after 1.2 seconds if not previously dismissed
-    const dismissed = sessionStorage.getItem('quick_login_dismissed');
-    if (!dismissed) {
-      const timer = setTimeout(() => {
-        setQuickLoginAccount({
-          name: 'TS. BS. Nguyễn Minh Tâm',
-          email: 'tam.nguyen@hsaps.org.vn',
-          avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDPMwZDc8-HwyVrFvv_I8XqOxJ3x_azja-p6OJbT69oL2OyWc9ckeRS0H_2dV3jqUSH8lU2CyGN44OFi-WiOsNi_mGgdgTzPWoVZjhyxsVoDqjFqadxAtISHyFNe0hCpDF9eKEF2XUg9Sz02WSpp34z2SN3g47rp_FwZs4xCAC1t-UXwDqHfrzGPO3vHUJfLHcwaPnPELRdXKLNHv6ETpiDw-oSPkG3SNBSCFQ2zlqRh5EZytA9Ddilkv4wbgwoqNOmu_PVFvnZcyk',
-        });
-        setShowQuickLogin(true);
-      }, 1200);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  const handleQuickLogin = async () => {
-    if (!quickLoginAccount) return;
-    setIsLoginSubmitting(true);
-    setLoginError('');
-    setShowQuickLogin(false);
-    try {
-      // Simulate quick OAuth login withcredentials
-      const res = await signIn('credentials', {
-        email: quickLoginAccount.email,
-        password: 'admin123', // Master simulated password
-        redirect: false,
-      });
-      setIsLoginSubmitting(false);
-      if (res?.error) {
-        // Fallback: Mock login on database offline simulation
-        setLoginSuccess(true);
-        setTimeout(() => router.push('/admin'), 800);
-      } else {
-        setLoginSuccess(true);
-        setTimeout(() => router.push('/admin'), 800);
-      }
-    } catch (err) {
-      setIsLoginSubmitting(false);
-      setLoginError('Đăng nhập nhanh không thành công.');
-    }
-  };
-
-  const dismissQuickLogin = () => {
-    setShowQuickLogin(false);
-    sessionStorage.setItem('quick_login_dismissed', 'true');
-  };
+  // Quick login popup đã bị tắt (chỉ dùng đăng nhập thật qua Supabase)
 
   // ==========================================
   // LOGIN FORM STATE & HANDLER
@@ -123,6 +71,7 @@ function LoginContent() {
     setIsLoginSubmitting(true);
     setLoginError('');
     try {
+      const callbackUrl = searchParams.get('callbackUrl') || '/';
       const res = await signIn('credentials', {
         email: loginEmail,
         password: loginPassword,
@@ -134,7 +83,7 @@ function LoginContent() {
       } else {
         setLoginSuccess(true);
         setTimeout(() => {
-          router.push('/admin');
+          router.push(callbackUrl);
         }, 800);
       }
     } catch (err) {
@@ -145,13 +94,13 @@ function LoginContent() {
 
   // Social log-in oauth handlers
   const handleGoogleSignIn = () => {
-    // Call standard next-auth signIn oauth provider
-    signIn('google', { callbackUrl: '/admin' });
+    const callbackUrl = searchParams.get('callbackUrl') || '/';
+    signIn('google', { callbackUrl });
   };
 
   const handleZaloSignIn = () => {
-    // Call custom zalo provider
-    signIn('zalo', { callbackUrl: '/admin' });
+    const callbackUrl = searchParams.get('callbackUrl') || '/';
+    signIn('zalo', { callbackUrl });
   };
 
   // ==========================================
@@ -336,63 +285,7 @@ function LoginContent() {
   return (
     <div className="flex min-h-screen w-full bg-white dark:bg-[#090b0e] text-slate-800 dark:text-slate-100 font-sans relative">
       
-      {/* ======================================================== */}
-      {/* GOOGLE ONE TAP SUGGESTION OVERLAY CARD */}
-      {/* ======================================================== */}
-      <AnimatePresence>
-        {showQuickLogin && quickLoginAccount && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-4 right-4 z-50 w-full max-w-[350px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-5 backdrop-blur-md"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-2">
-                <svg className="h-5 w-5" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                </svg>
-                <span className="text-[11px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Đăng nhập nhanh</span>
-              </div>
-              <button
-                onClick={dismissQuickLogin}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1"
-              >
-                <X className="size-4" />
-              </button>
-            </div>
 
-            <div className="flex gap-4 items-center mb-5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={quickLoginAccount.avatar}
-                alt="Google Avatar"
-                className="size-12 rounded-full border border-slate-100 dark:border-slate-800 object-cover"
-              />
-              <div>
-                <h4 className="text-sm font-bold text-slate-850 dark:text-white">{quickLoginAccount.name}</h4>
-                <p className="text-xs text-slate-400 leading-normal">{quickLoginAccount.email}</p>
-              </div>
-            </div>
-
-            <button
-              onClick={handleQuickLogin}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#4285F4] hover:bg-[#357ae8] text-white h-11 text-xs font-bold transition-all shadow-md shadow-blue-500/10 cursor-pointer"
-            >
-              <span>Tiếp tục dưới tên {quickLoginAccount.name.split(' ').pop()}</span>
-              <ArrowRight className="size-4" />
-            </button>
-            
-            <p className="text-[10px] text-slate-400 mt-3 text-center leading-normal">
-              Đăng nhập an toàn trực tiếp qua hệ thống Google Identity.
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* 1. LEFT SIDE: Premium Brand & Statistics Panel */}
       <div className="hidden lg:flex lg:w-[42%] bg-[#0d1117] border-r border-white/[0.06] flex-col justify-between p-12 relative overflow-hidden">
@@ -512,7 +405,7 @@ function LoginContent() {
                   </div>
                   <h4 className="font-bold text-sm text-emerald-400">Xác thực thành công!</h4>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    Hệ thống đang thiết lập phiên làm việc, bạn sẽ được chuyển hướng về trang quản lý hành chính ngay lập tức.
+                    Đăng nhập thành công! Bạn sẽ được chuyển hướng về trang chủ ngay lập tức.
                   </p>
                 </motion.div>
               ) : (
