@@ -70,21 +70,23 @@ export default function PartnerDashboard({ email, name }: { email: string; name:
           </div>
           <div className="flex flex-wrap gap-3">
             {partnerInfo?.id && (
-              <Link
-                href={`/admin/doi-tac?id=${partnerInfo.id}`}
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-bold text-[#ec297b] shadow-lg hover:bg-white/90 transition-all"
-              >
-                <Settings className="size-3.5" />
-                Cài đặt hồ sơ đối tác
-              </Link>
+              <>
+                <Link
+                  href={`/admin/doi-tac/${partnerInfo.id}`}
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-bold text-[#ec297b] shadow-lg hover:bg-white/90 transition-all"
+                >
+                  <Settings className="size-3.5" />
+                  Cài đặt hồ sơ đối tác
+                </Link>
+                <Link
+                  href={`/admin/doi-tac/${partnerInfo.id}`}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 backdrop-blur px-4 py-2 text-xs font-semibold hover:bg-white/20 transition-all"
+                >
+                  <PlusCircle className="size-3.5" />
+                  Thêm sản phẩm mới
+                </Link>
+              </>
             )}
-            <Link
-              href="/admin/doi-tac"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 backdrop-blur px-4 py-2 text-xs font-semibold hover:bg-white/20 transition-all"
-            >
-              <PlusCircle className="size-3.5" />
-              Thêm sản phẩm mới
-            </Link>
           </div>
         </div>
       </div>
@@ -181,7 +183,7 @@ export default function PartnerDashboard({ email, name }: { email: string; name:
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
             <h3 className="text-base font-black text-gray-800 dark:text-white mb-6">Thao tác nhanh</h3>
             <div className="space-y-2">
-              <Link href="/admin/doi-tac" className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-850 hover:bg-amber-500/5 hover:text-amber-500 text-sm font-semibold transition-all group">
+              <Link href={`/admin/doi-tac/${partnerInfo.id}`} className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-850 hover:bg-amber-500/5 hover:text-amber-500 text-sm font-semibold transition-all group">
                 <span>Quản lý danh sách sản phẩm</span>
                 <ChevronRight className="size-4 text-gray-400 group-hover:text-amber-500 transition-colors" />
               </Link>

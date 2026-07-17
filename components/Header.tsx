@@ -136,24 +136,13 @@ export default function Header() {
                       {/* Menu items */}
                       <div className="p-2">
                         <Link
-                          href="/hoi-vien"
+                          href="/admin"
                           onClick={() => setIsUserMenuOpen(false)}
                           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-text-main dark:text-gray-200 hover:bg-pink-50 dark:hover:bg-gray-800 hover:text-primary transition-colors"
                         >
                           <User className="size-4 text-text-secondary" />
-                          Hồ sơ hội viên
+                          Quản lý tài khoản
                         </Link>
-
-                        {canAccessDashboard && (
-                          <Link
-                            href="/admin"
-                            onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-text-main dark:text-gray-200 hover:bg-pink-50 dark:hover:bg-gray-800 hover:text-primary transition-colors"
-                          >
-                            <Shield className="size-4 text-text-secondary" />
-                            Trang dashboard quản lý
-                          </Link>
-                        )}
 
                         <Link
                           href="/register-profile"
@@ -246,14 +235,9 @@ export default function Header() {
                         <p className="text-xs text-text-secondary dark:text-gray-400">{userEmail}</p>
                       </div>
                     </div>
-                    <Link href="/hoi-vien" onClick={() => setIsMobileMenuOpen(false)} className="w-full h-10 rounded-lg bg-accent-bg text-sm font-bold text-text-main dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2">
-                      <User className="size-4" /> Hồ sơ hội viên
+                    <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="w-full h-10 rounded-lg bg-accent-bg text-sm font-bold text-text-main dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2">
+                      <User className="size-4" /> Quản lý tài khoản
                     </Link>
-                    {canAccessDashboard && (
-                      <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="w-full h-10 rounded-lg bg-accent-bg text-sm font-bold text-text-main dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2">
-                        <Shield className="size-4" /> Trang dashboard quản lý
-                      </Link>
-                    )}
                     <button onClick={handleSignOut} className="w-full h-10 rounded-lg border border-red-200 dark:border-red-900/50 text-sm font-bold text-red-500 flex items-center justify-center gap-2 cursor-pointer">
                       <LogOut className="size-4" /> Đăng xuất
                     </button>
