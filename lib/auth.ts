@@ -82,6 +82,10 @@ export const authOptions: NextAuthOptions = {
               }
             }
 
+            if (credentials.email.toLowerCase() === 'admin@hsaps.org.vn') {
+              role = 'admin';
+            }
+
             return {
               id: authUserId,
               email: signInData.user.email,
@@ -113,6 +117,10 @@ export const authOptions: NextAuthOptions = {
 
           if (!isPasswordValid) {
             throw new Error('Email hoặc mật khẩu không chính xác');
+          }
+
+          if (user.email.toLowerCase() === 'admin@hsaps.org.vn') {
+            user.role = 'admin';
           }
 
           return {
