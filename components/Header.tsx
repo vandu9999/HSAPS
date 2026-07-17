@@ -36,7 +36,8 @@ export default function Header() {
     { label: 'Liên hệ', href: '/lien-he' },
   ];
 
-  const isAdmin = (session?.user as any)?.role === 'ADMIN' || (session?.user as any)?.role === 'admin';
+  const userRole = ((session?.user as any)?.role || '').toUpperCase();
+  const canAccessDashboard = userRole === 'ADMIN' || userRole === 'EDITOR';
   const userName = session?.user?.name || session?.user?.email?.split('@')[0] || 'Tài khoản';
   const userEmail = session?.user?.email || '';
 
@@ -143,14 +144,14 @@ export default function Header() {
                           Hồ sơ hội viên
                         </Link>
 
-                        {isAdmin && (
+                        {canAccessDashboard && (
                           <Link
                             href="/admin"
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-text-main dark:text-gray-200 hover:bg-pink-50 dark:hover:bg-gray-800 hover:text-primary transition-colors"
                           >
                             <Shield className="size-4 text-text-secondary" />
-                            Trang quản trị
+                            Trang dashboard quản lý
                           </Link>
                         )}
 
@@ -248,9 +249,9 @@ export default function Header() {
                     <Link href="/hoi-vien" onClick={() => setIsMobileMenuOpen(false)} className="w-full h-10 rounded-lg bg-accent-bg text-sm font-bold text-text-main dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2">
                       <User className="size-4" /> Hồ sơ hội viên
                     </Link>
-                    {isAdmin && (
+                    {canAccessDashboard && (
                       <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="w-full h-10 rounded-lg bg-accent-bg text-sm font-bold text-text-main dark:bg-gray-800 dark:text-white flex items-center justify-center gap-2">
-                        <Shield className="size-4" /> Trang quản trị
+                        <Shield className="size-4" /> Trang dashboard quản lý
                       </Link>
                     )}
                     <button onClick={handleSignOut} className="w-full h-10 rounded-lg border border-red-200 dark:border-red-900/50 text-sm font-bold text-red-500 flex items-center justify-center gap-2 cursor-pointer">
