@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #ec297b;
+  --color-primary-dark: #c2185f;
+  --color-secondary: #fcd34d;
+  --color-secondary-dark: #fbbf24;
+  --color-background-light: #fdf8fa;
+  --color-background-dark: #1a1016;
+  --color-text-main: #2d1a24;
+  --color-text-secondary: #6b4c5d;
+  --color-accent-bg: #fce7f3;
+  --font-display: var(--font-manrope);
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Admin light theme overrides */
+.light-theme {
+  --bg-base: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-sub: #94a3b8;
+  --border-color: #e2e8f0;
+  --border-muted: #f1f5f9;
+  --bg-secondary: #f1f5f9;
+  --bg-input: #ffffff;
+}
+
+/* Base styles */
+.light-theme {
+  background-color: var(--bg-base) !important;
+  color: var(--text-main) !important;
+}
+
+/* Background overrides */
+.light-theme .bg-\[\#0d1117\] {
+  background-color: var(--bg-base) !important;
+}
+
+.light-theme .bg-\[\#161b22\] {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+}
+
+.light-theme .bg-white\/\[0\.04\],
+.light-theme .bg-white\/5,
+.light-theme .bg-white\/\[0\.02\] {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Sidebar specifically */
+.light-theme aside.bg-\[\#0d1117\] {
+  background-color: #ffffff !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05);
+}
+
+.light-theme aside .text-white {
+  color: var(--text-main) !important;
+}
+
+.light-theme aside .text-white\/40,
+.light-theme aside .text-white\/30,
+.light-theme aside .text-white\/50,
+.light-theme aside .text-white\/70 {
+  color: var(--text-muted) !important;
+}
+
+.light-theme aside .border-white\/\[0\.06\] {
+  border-color: var(--border-color) !important;
+}
+
+.light-theme aside a:hover {
+  background-color: var(--bg-secondary) !important;
+}
+
+.light-theme aside a.bg-white\/\[0\.04\] {
+  background-color: #f1f5f9 !important;
+  color: #ec297b !important;
+}
+
+/* Text color overrides */
+.light-theme .text-white,
+.light-theme .text-white\/80 {
+  color: var(--text-main) !important;
+}
+
+.light-theme .text-white\/70,
+.light-theme .text-white\/60,
+.light-theme .text-white\/50 {
+  color: var(--text-muted) !important;
+}
+
+.light-theme .text-white\/40,
+.light-theme .text-white\/30,
+.light-theme .text-white\/20,
+.light-theme .text-white\/10 {
+  color: var(--text-sub) !important;
+}
+
+/* Borders */
+.light-theme .border-white\/10,
+.light-theme .border-white\/\[0\.06\],
+.light-theme .border-white\/\[0\.08\],
+.light-theme .border-white\/\[0\.04\] {
+  border-color: var(--border-color) !important;
+}
+
+/* Tables */
+.light-theme table tr {
+  border-color: var(--border-color) !important;
+}
+
+.light-theme table tr:hover {
+  background-color: rgba(241, 245, 249, 0.5) !important;
+}
+
+.light-theme th {
+  color: var(--text-muted) !important;
+}
+
+/* Inputs & Form fields */
+.light-theme input[type="text"],
+.light-theme input[type="number"],
+.light-theme input[type="tel"],
+.light-theme input[type="email"],
+.light-theme textarea,
+.light-theme select {
+  background-color: var(--bg-input) !important;
+  color: var(--text-main) !important;
+  border-color: #cbd5e1 !important;
+}
+
+.light-theme input::placeholder,
+.light-theme textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light-theme select option {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+}
+
+/* Top bar sticky backdrop */
+.light-theme .sticky {
+  background-color: rgba(248, 250, 252, 0.8) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Color dot ring offset in light theme */
+.light-theme .ring-offset-\[\#161b22\] {
+  --tw-ring-offset-color: #ffffff !important;
+}
+
+/* ContentEditable Placeholder */
+[contenteditable][data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(255, 255, 255, 0.25) !important;
+  pointer-events: none;
+  display: block;
+}
+.light-theme [contenteditable][data-placeholder]:empty::before {
+  color: #94a3b8 !important;
+}

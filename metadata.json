@@ -1,0 +1,6 @@
+{
+  "name": "HSAPS Landing Page",
+  "description": "Landing page for Ho Chi Minh City Society of Plastic and Aesthetic Surgery",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

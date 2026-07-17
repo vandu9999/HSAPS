@@ -1,0 +1,285 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { ArrowLeft, Save, Handshake, Plus, X } from 'lucide-react';
+import { Toast, useToast } from '../../components/Toast';
+import RichTextEditor from '../../components/RichTextEditor';
+import ImageUploadField from '../../components/ImageUploadField';
+import { getPartnerById, savePartner } from '@/app/actions/partner';
+import { isDbConnected } from '@/app/actions/dbCheck';
+
+type Product = { name: string; description: string; imageUrl: string };
+
+type Partner = {
+  id: string;
+  name: string;
+  category: 'Kim cương' | 'Vàng' | 'Bạc' | 'Đồng hành';
+  description: string;
+  website: string;
+  phone: string;
+  email: string;
+  address: string;
+  introduction: string;
+  products: Product[];
+  logoType?: string;
+};
+
+const SECTIONS = [
+  { id: 'info', label: 'Thông tin chung' },
+  { id: 'products', label: 'Sản phẩm' },
+] as const;
+
+function TextField({ label, value, onChange, multiline = false, rows = 3, placeholder = '' }: {
+  label: string; value: string; onChange: (v: string) => void;
+  multiline?: boolean; rows?: number; placeholder?: string;
+}) {
+  const cls = "w-full rounded-xl bg-[#0d1117] border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:border-[#ec297b]/50 focus:outline-none focus:ring-1 focus:ring-[#ec297b]/20 transition-all resize-none";
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-xs font-bold text-white/50 uppercase tracking-wider">{label}</label>
+      {multiline
+        ? <textarea value={value} onChange={e => onChange(e.target.value)} rows={rows} className={cls} placeholder={placeholder} />
+        : <input type="text" value={value} onChange={e => onChange(e.target.value)} className={cls} placeholder={placeholder} />
+      }
+    </div>
+  );
+}
+
+export default function SuaDoiTacPage() {
+  const router = useRouter();
+  const params = useParams();
+  const id = params?.id as string;
+
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [form, setForm] = useState<Partner | null>(null);
+  const [activeSection, setActiveSection] = useState<'info' | 'products'>('info');
+  const { toast, showToast, closeToast } = useToast();
+  const [dbActive, setDbActive] = useState(false);
+
+  useEffect(() => {
+    isDbConnected().then(connected => {
+      setDbActive(connected);
+      if (connected) {
+        getPartnerById(id).then(item => {
+          if (item) setForm(item as any);
+        });
+      } else {
+        const saved = localStorage.getItem('cms_doi_tac');
+        if (saved) {
+          try {
+            const list: Partner[] = JSON.parse(saved);
+            setPartners(list);
+            const item = list.find(p => p.id === id);
+            if (item) setForm(item);
+          } catch {}
+        }
+      }
+    });
+  }, [id]);
+
+  const up = (key: keyof Partner) => (v: string) => {
+    if (form) setForm({ ...form, [key]: v });
+  };
+
+  const updateProduct = (i: number, key: keyof Product, v: string) => {
+    if (!form) return;
+    const products = [...form.products];
+    products[i] = { ...products[i], [key]: v };
+    setForm({ ...form, products });
+  };
+
+  const addProduct = () => {
+    if (!form) return;
+    setForm({ ...form, products: [...form.products, { name: '', description: '', imageUrl: '' }] });
+  };
+
+  const removeProduct = (i: number) => {
+    if (!form) return;
+    setForm({ ...form, products: form.products.filter((_, idx) => idx !== i) });
+  };
+
+  const handleSave = async () => {
+    if (!form || !form.name.trim()) return;
+    
+    if (dbActive) {
+      const res = await savePartner({
+        id: form.id,
+        name: form.name,
+        category: form.category,
+        description: form.description,
+        website: form.website,
+        phone: form.phone,
+        email: form.email,
+        address: form.address,
+        introduction: form.introduction,
+        logoType: form.logoType,
+        products: form.products,
+      });
+      if (res.success) {
+        showToast('✅ Đã cập nhật đối tác thành công!', 'success');
+        setTimeout(() => router.push('/admin/doi-tac'), 800);
+      } else {
+        showToast('❌ Lỗi: ' + res.error, 'error');
+      }
+    } else {
+      const newList = partners.map(p => p.id === id ? form : p);
+      localStorage.setItem('cms_doi_tac', JSON.stringify(newList));
+      showToast('✅ Đã cập nhật đối tác thành công (local)!', 'success');
+      setTimeout(() => router.push('/admin/doi-tac'), 800);
+    }
+  };
+
+  if (!form) {
+    return (
+      <div className="min-h-screen bg-[#0d1117] text-white flex flex-col items-center justify-center gap-4">
+        <p className="text-white/40 text-sm">Không tìm thấy đối tác hoặc dữ liệu đang tải...</p>
+        <button onClick={() => router.push('/admin/doi-tac')} className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/5 transition-all">
+          Quay lại danh sách
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0d1117] text-white pb-12">
+      {/* Sticky top bar */}
+      <div className="sticky top-0 z-10 bg-[#0d1117]/80 backdrop-blur-xl border-b border-white/[0.06] px-8 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button onClick={() => router.push('/admin/doi-tac')}
+              className="flex items-center gap-1.5 rounded-xl border border-white/10 px-3 py-2 text-sm font-semibold text-white/60 hover:text-white hover:border-white/20 transition-all">
+              <ArrowLeft className="size-4" /> Quay lại
+            </button>
+            <div>
+              <div className="flex items-center gap-2 text-xs text-white/30 mb-0.5">
+                <span>Admin</span><span>/</span><span>Đối tác</span><span>/</span>
+                <span className="text-white/60">Chỉnh sửa</span>
+              </div>
+              <h1 className="text-lg font-bold text-white flex items-center gap-2">
+                <Handshake className="size-5 text-amber-400" />
+                Chỉnh sửa đối tác
+              </h1>
+            </div>
+          </div>
+          <button onClick={handleSave} disabled={!form.name.trim()}
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#ec297b] to-[#c2185f] px-5 py-2 text-sm font-bold text-white shadow-lg shadow-pink-500/20 hover:opacity-90 transition-all disabled:opacity-40">
+            <Save className="size-3.5" /> Lưu thay đổi
+          </button>
+        </div>
+      </div>
+
+      <div className="p-8">
+        <div className="max-w-4xl">
+          {/* Tabs */}
+          <div className="flex gap-1 rounded-xl bg-[#161b22] border border-white/[0.06] p-1 mb-6 w-fit">
+            {SECTIONS.map(s => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => setActiveSection(s.id)}
+                className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${
+                  activeSection === s.id
+                    ? 'bg-[#ec297b] text-white shadow-md'
+                    : 'text-white/40 hover:text-white/75'
+                }`}
+              >
+                {s.label} {s.id === 'products' && `(${form.products.length})`}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 gap-6">
+            {/* Left Column */}
+            <div className="col-span-2 space-y-5">
+              {activeSection === 'info' && (
+                <div className="rounded-2xl bg-[#161b22] border border-white/[0.06] p-6 space-y-5">
+                  <h2 className="text-sm font-bold text-white/70 border-b border-white/[0.06] pb-3">Thông tin đối tác</h2>
+                  
+                  <TextField label="Tên đối tác *" value={form.name} onChange={up('name')} placeholder="Tên công ty hoặc thương hiệu..." />
+
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-white/50 uppercase tracking-wider">Hạng đối tác</label>
+                    <select
+                      value={form.category}
+                      onChange={e => setForm(f => f ? ({ ...f, category: e.target.value as Partner['category'] }) : null)}
+                      className="w-full rounded-xl bg-[#0d1117] border border-white/10 px-4 py-2.5 text-sm text-white focus:border-[#ec297b]/50 focus:outline-none transition-all"
+                    >
+                      {['Kim cương', 'Vàng', 'Bạc', 'Đồng hành'].map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+
+                  <TextField label="Mô tả ngắn" value={form.description} onChange={up('description')} multiline rows={2} placeholder="Mô tả ngắn gọn về đối tác..." />
+                  <RichTextEditor label="Giới thiệu chi tiết" value={form.introduction} onChange={up('introduction')} placeholder="Thông tin giới thiệu chi tiết..." />
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <TextField label="Website" value={form.website} onChange={up('website')} placeholder="https://..." />
+                    <TextField label="Email liên hệ" value={form.email} onChange={up('email')} placeholder="partner@example.com" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <TextField label="Số điện thoại" value={form.phone} onChange={up('phone')} placeholder="09xx.xxx.xxx" />
+                    <TextField label="Địa chỉ văn phòng" value={form.address} onChange={up('address')} placeholder="Địa chỉ trụ sở chính..." />
+                  </div>
+                </div>
+              )}
+
+              {activeSection === 'products' && (
+                <div className="space-y-4">
+                  {form.products.map((product, i) => (
+                    <div key={i} className="rounded-2xl bg-[#161b22] border border-white/[0.06] p-6 space-y-4 relative">
+                      <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                        <p className="text-sm font-bold text-white/70">Sản phẩm #{i + 1}</p>
+                        <button
+                          type="button"
+                          onClick={() => removeProduct(i)}
+                          className="flex h-7 w-7 items-center justify-center rounded-lg text-red-400 hover:bg-red-500/10 transition-all"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      </div>
+
+                      <TextField label="Tên sản phẩm" value={product.name} onChange={v => updateProduct(i, 'name', v)} placeholder="Nhập tên sản phẩm thiết bị..." />
+                      <TextField label="Mô tả sản phẩm" value={product.description} onChange={v => updateProduct(i, 'description', v)} multiline rows={2} placeholder="Mô tả tính năng công nghệ của sản phẩm..." />
+                      
+                      <ImageUploadField
+                        label="Hình ảnh sản phẩm"
+                        value={product.imageUrl}
+                        onChange={v => updateProduct(i, 'imageUrl', v)}
+                        recommendedSize="600 x 400 px (Tỷ lệ 3:2)"
+                      />
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={addProduct}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-4 text-xs font-semibold text-white/40 hover:text-white/70 hover:border-white/20 transition-all bg-white/[0.01]"
+                  >
+                    <Plus className="size-4" />
+                    Thêm sản phẩm của đối tác
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Right Column */}
+            <div className="col-span-1">
+              <div className="rounded-2xl bg-[#161b22] border border-white/[0.06] p-6 space-y-4">
+                <h2 className="text-sm font-bold text-white/70 border-b border-white/[0.06] pb-3">Logo thương hiệu</h2>
+                <div className="flex flex-col items-center justify-center py-6 border border-dashed border-white/10 rounded-xl bg-white/[0.01]">
+                  <Handshake className="size-12 text-white/25 mb-2" />
+                  <span className="text-[11px] text-white/40 font-bold uppercase tracking-wider">{form.category}</span>
+                </div>
+                <div className="p-3 bg-white/[0.02] border border-white/[0.04] rounded-xl text-xs text-white/40 space-y-1">
+                  <p>• Logo thương hiệu sẽ tự động sinh chữ từ tên đối tác ở màn hình danh sách.</p>
+                  <p>• Tải ảnh sản phẩm riêng trong tab Sản Phẩm.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={closeToast} />}
+    </div>
+  );
+}
