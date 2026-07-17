@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Save, ImageIcon, Home, Megaphone, BarChart3, RefreshCw, ExternalLink, Newspaper } from 'lucide-react';
 import { Toast, useToast } from '../components/Toast';
+import ImageUploadField from '../components/ImageUploadField';
 
 // ─── Default Data ────────────────────────────────────────────────────────────
 
@@ -32,56 +33,6 @@ const DEFAULT_DATA = {
     btn2Text: 'Liên hệ tư vấn',
   },
 };
-
-// ─── Image Uploader Component ─────────────────────────────────────────────────
-
-function ImageField({ label, value, onChange, hint }: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  hint?: string;
-}) {
-  const [preview, setPreview] = useState(value);
-  const [imgError, setImgError] = useState(false);
-
-  const handleChange = (v: string) => {
-    onChange(v);
-    setPreview(v);
-    setImgError(false);
-  };
-
-  return (
-    <div className="space-y-2">
-      <label className="block text-xs font-bold text-white/60 uppercase tracking-wider">{label}</label>
-      {hint && <p className="text-[11px] text-white/30">{hint}</p>}
-      <div className="flex gap-3">
-        <div className="flex-1">
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => handleChange(e.target.value)}
-            placeholder="https://..."
-            className="w-full rounded-xl bg-[#0d1117] border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:border-[#ec297b]/50 focus:outline-none focus:ring-1 focus:ring-[#ec297b]/20 transition-all"
-          />
-        </div>
-        {preview && !imgError ? (
-          <div className="relative h-10 w-16 shrink-0 rounded-lg overflow-hidden border border-white/10 bg-white/5">
-            <img
-              src={preview}
-              alt="preview"
-              className="h-full w-full object-cover"
-              onError={() => setImgError(true)}
-            />
-          </div>
-        ) : (
-          <div className="flex h-10 w-16 shrink-0 items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/[0.02]">
-            <ImageIcon className="size-4 text-white/20" />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function TextField({ label, value, onChange, multiline = false, rows = 3 }: {
   label: string;
@@ -235,11 +186,11 @@ export default function TrangChuCMS() {
             <div className="space-y-5">
               <div className="rounded-2xl bg-[#161b22] border border-white/[0.06] p-6 space-y-5">
                 <h3 className="text-sm font-bold text-white/80 border-b border-white/[0.06] pb-3">Hình ảnh</h3>
-                <ImageField
-                  label="URL ảnh Hero banner"
+                <ImageUploadField
+                  label="Tải lên ảnh Hero banner"
                   value={data.hero.imageUrl}
                   onChange={(v) => updateHero('imageUrl', v)}
-                  hint="Khuyến nghị: 1200×900px, tỷ lệ 4:3"
+                  recommendedSize="1200 x 900 px (Tỷ lệ 4:3)"
                 />
                 <TextField label="Alt text (SEO)" value={data.hero.imageAlt} onChange={(v) => updateHero('imageAlt', v)} />
               </div>

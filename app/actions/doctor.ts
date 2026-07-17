@@ -110,3 +110,22 @@ export async function deleteDoctor(id: string) {
     return { success: false, error: error.message || 'Lỗi xóa hội viên' };
   }
 }
+
+export async function getDoctorByEmail(email: string) {
+  if (!process.env.DATABASE_URL) {
+    return DOCTORS_DATA.find(d => d.email.toLowerCase() === email.toLowerCase()) || null;
+  }
+  try {
+    return await prisma.doctor.findFirst({
+      where: {
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
+      },
+    });
+  } catch (error) {
+    console.error(`❌ Failed to fetch doctor by email ${email}:`, error);
+    return DOCTORS_DATA.find(d => d.email.toLowerCase() === email.toLowerCase()) || null;
+  }
+}

@@ -7,6 +7,7 @@ import {
   Shield, AlignLeft, AlignCenter
 } from 'lucide-react';
 import { Toast, useToast } from '../components/Toast';
+import ImageUploadField from '../components/ImageUploadField';
 
 // ─── Default Settings ─────────────────────────────────────────────────────────
 
@@ -133,25 +134,7 @@ function Toggle({ label, desc, checked, onChange }: {
   );
 }
 
-function ImageField({ label, value, onChange, hint }: { label: string; value: string; onChange: (v: string) => void; hint?: string }) {
-  const [err, setErr] = useState(false);
-  return (
-    <div className="space-y-1.5">
-      <label className="block text-xs font-bold text-white/50 uppercase tracking-wider">{label}</label>
-      {hint && <p className="text-[11px] text-white/30">{hint}</p>}
-      <div className="flex gap-2">
-        <input type="text" value={value} onChange={e => { onChange(e.target.value); setErr(false); }} placeholder="https://..."
-          className="flex-1 rounded-xl bg-[#0d1117] border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:border-[#ec297b]/50 focus:outline-none transition-all" />
-        <div className="relative h-10 w-16 shrink-0 rounded-lg overflow-hidden border border-white/10 bg-white/5">
-          {value && !err
-            ? <img src={value} alt="" className="h-full w-full object-cover" onError={() => setErr(true)} />
-            : <div className="flex h-full items-center justify-center"><ImageIcon className="size-4 text-white/20" /></div>
-          }
-        </div>
-      </div>
-    </div>
-  );
-}
+
 
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -297,8 +280,8 @@ export default function CaiDatPage() {
                 </div>
               </SectionCard>
               <SectionCard title="Logo & Favicon">
-                <ImageField label="URL Logo chính" value={settings.general.logoUrl} onChange={v => upGeneral('logoUrl', v)} hint="PNG/SVG nền trong suốt, khuyến nghị 200×60px" />
-                <ImageField label="URL Favicon" value={settings.general.faviconUrl} onChange={v => upGeneral('faviconUrl', v)} hint="ICO hoặc PNG 32×32px" />
+                <ImageUploadField label="Tải lên Logo chính" value={settings.general.logoUrl} onChange={v => upGeneral('logoUrl', v)} recommendedSize="200 x 60 px (PNG/SVG nền trong suốt)" />
+                <ImageUploadField label="Tải lên Favicon" value={settings.general.faviconUrl} onChange={v => upGeneral('faviconUrl', v)} recommendedSize="32 x 32 px (ICO hoặc PNG)" />
               </SectionCard>
               <SectionCard title="Trạng thái hệ thống">
                 <Toggle
@@ -372,7 +355,7 @@ export default function CaiDatPage() {
                 <Field label="Meta Keywords" value={settings.seo.metaKeywords} onChange={v => upSeo('metaKeywords', v)} hint="Phân cách bằng dấu phẩy" />
               </SectionCard>
               <SectionCard title="Open Graph (Social Share)">
-                <ImageField label="OG Image" value={settings.seo.ogImageUrl} onChange={v => upSeo('ogImageUrl', v)} hint="Ảnh hiển thị khi chia sẻ lên mạng xã hội, 1200×630px" />
+                <ImageUploadField label="Tải lên OG Image" value={settings.seo.ogImageUrl} onChange={v => upSeo('ogImageUrl', v)} recommendedSize="1200 x 630 px (Ảnh chia sẻ mạng xã hội)" />
                 <Field label="Canonical URL" value={settings.seo.canonicalUrl} onChange={v => upSeo('canonicalUrl', v)} hint="URL gốc của website" />
               </SectionCard>
               <SectionCard title="Analytics">
@@ -458,7 +441,7 @@ export default function CaiDatPage() {
           {activeTab === 'header' && (
             <>
               <SectionCard title="Logo Header">
-                <ImageField label="URL Logo Header" value={settings.header.logoUrl} onChange={v => upHeader('logoUrl', v)} hint="Để trống để dùng logo text" />
+                <ImageUploadField label="Tải lên Logo Header" value={settings.header.logoUrl} onChange={v => upHeader('logoUrl', v)} recommendedSize="200 x 60 px (để trống để dùng logo text)" />
                 <Field label="Logo Text (nếu không có ảnh)" value={settings.header.logoText} onChange={v => upHeader('logoText', v)} />
               </SectionCard>
               <SectionCard title="Tùy chọn Header">

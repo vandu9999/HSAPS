@@ -3,8 +3,9 @@ import { withAuth } from 'next-auth/middleware';
 export default withAuth({
   callbacks: {
     authorized: ({ token }) => {
-      // Require any authenticated user for admin access
-      return !!token;
+      if (!token) return false;
+      const role = (token.role as string || '').toUpperCase();
+      return role === 'ADMIN' || role === 'EDITOR';
     },
   },
 });
