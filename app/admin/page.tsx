@@ -129,6 +129,8 @@ function SparkBar({ data, color }: { data: number[]; color: string }) {
       />
     </div>
   );
+}
+
 // ─── Hero Event Slider Component ──────────────────────────────────────────────
 
 const HERO_SLIDER_EVENTS = [

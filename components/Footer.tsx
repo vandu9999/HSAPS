@@ -78,6 +78,7 @@ export default function Footer() {
                 info@hsaps.org.vn
               </p>
             </div>
+          </div>
           {/* Newsletter Subscription */}
           <div className="flex flex-col gap-3">
             <h4 className="text-sm font-bold uppercase tracking-wider text-text-main dark:text-white">Đăng ký nhận tin tức</h4>
