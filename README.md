@@ -1,104 +1,146 @@
-# HSAPS PORTAL - Hệ thống Quản lý Hội viên & Khoa học
+# HSAPS PORTAL - Hệ thống Portal Quản trị & Truyền thông Y học Thẩm mỹ
 
-Hệ thống Portal quản trị hành chính và lưu trữ nghiên cứu khoa học chuyên nghiệp dành cho **Hội Phẫu thuật Tạo hình Thẩm mỹ TP.HCM (HSAPS)**. Được xây dựng trên nền tảng Next.js (App Router), TypeScript, Prisma ORM và hệ sinh thái Supabase (Database & Storage).
-
----
-
-## ✨ Các Tính Năng Cốt Lõi
-
-### 1. Quản lý Tài khoản & Phân quyền Chi tiết (RBAC)
-- **Hệ thống phân quyền 3 lớp bảo mật** cấu hình qua [middleware.ts](middleware.ts):
-  - **Ban Quản Trị (ADMIN)**: Toàn quyền truy cập, chỉnh sửa toàn bộ danh mục Trang chủ, Tin tức, Sự kiện, Hội viên Bác sĩ, Đối tác tài trợ, Báo cáo KH, Phân loại danh mục và Cài đặt.
-  - **Bác sĩ Hội viên (EDITOR)**: Giao diện Sidebar tự động tinh giản. Chỉ được phép viết bài viết, xem sự kiện, đăng tải báo cáo khoa học của chính mình và truy cập mục **"Hồ sơ của tôi"** để cập nhật thông tin cá nhân.
-  - **Khách mời (GUEST)**: Bị chặn toàn bộ quyền truy cập vào khu vực `/admin/*`.
-- **Đăng nhập & Đăng ký đa phương thức**:
-  - Xác thực tài khoản Admin/Hội viên qua **NextAuth.js**.
-  - Tích hợp đăng nhập mạng xã hội **Google & Zalo Account**.
-  - **Gợi ý Đăng nhập nhanh (Google One Tap Style)**: Tự động nhận diện tài khoản và gợi ý đăng nhập một chạm cực kỳ chuyên nghiệp.
-
-### 2. Quy trình Đăng ký Đa bước Chuyên nghiệp
-- **Bước 1**: Nhập tài khoản và chọn vai trò y khoa (Hội viên / Đối tác / Khách mời).
-- **Bước 2**: Khai báo hồ sơ y khoa chuyên sâu và **Ký tên online** trực tiếp bằng bảng vẽ HTML5 Canvas (nhận nét vẽ mượt mà từ chuột hoặc màn hình cảm ứng điện thoại).
-- **Bước 3**: Xem thông tin chuyển khoản hội phí Vietcombank tự động tạo cú pháp theo tên bác sĩ và tải lên hình ảnh **Hóa đơn giao dịch** (xác thực qua API).
-
-### 3. Tích hợp Hệ sinh thái Cloud Supabase
-- **Cơ sở dữ liệu**: Đồng bộ dữ liệu quan hệ hoàn hảo qua **Prisma ORM** và **PostgreSQL** của Supabase.
-- **Bộ lưu trữ (Storage)**: Hình ảnh tải lên từ CMS và hóa đơn đóng phí thành viên được truyền trực tiếp lên bucket công khai `images` của **Supabase Storage** với các quy tắc bảo mật RLS chặt chẽ.
-- **Email tự động**: Chuyển tiếp biểu mẫu Form liên hệ y khoa về hòm thư điện tử ban thư ký qua cổng **Resend API**.
+> **Dành cho AI Agent & Lập trình viên**: Đây là tài liệu quy chuẩn kiến trúc, thông tin tổ chức chính thức, mảng hoạt động, phân quyền và dữ liệu của dự án **HSAPS (Liên chi hội Phẫu thuật Tạo hình Thẩm mỹ TP.HCM)**. Khi thực hiện bất kỳ nhiệm vụ nào trong codebase này, AI Agent **BẮT BUỘC** đọc kỹ và tuân thủ các quy tắc trong README này.
 
 ---
 
-## 📂 Cấu Trúc Thư Mục Chính
+## 🏛️ 1. Thông Tin Tổ Chức Chính Thức (Official Identity)
+
+- **Tên đầy đủ chính thức**: Liên chi hội Phẫu thuật Tạo hình Thẩm mỹ TP. Hồ Chí Minh
+- **Tên viết tắt chuyên môn**: **HSAPS** (*Ho Chi Minh City Society of Aesthetic Plastic Surgery*)
+- **Trực thuộc**: **Hội Y học TP. Hồ Chí Minh** (Tổ chức xã hội - nghề nghiệp chính thống)
+- **Vị thế lịch sử & Nòng cốt**: Tiền thân nòng cốt xây dựng và phát triển thành **Hội Phẫu thuật Tạo hình Thẩm mỹ Việt Nam (VSAPS)**.
+- **Tôn chỉ hành nghề**: *"Chuyên môn vững vàng – Y đức sáng ngời – Chuẩn mực Y khoa"*
+- **Tài khoản Admin Quản trị chính (Master Administrator)**: `admin@hsaps.org.vn` (Toàn quyền hệ thống).
+
+---
+
+## 🎯 2. Các Mảng Hoạt Động Trọng Tâm (4 Core Operational Focus Areas)
+
+AI Agent khi tạo/sửa giao diện, nội dung hoặc module CMS cần đảm bảo tuân thủ chuẩn 4 mảng hoạt động trọng tâm này:
+
+### ① Đào tạo & Phát triển Chuyên môn
+- **Cập nhật kỹ thuật mới**: Hội nghị khoa học quốc tế thường niên, hội thảo chuyên đề trong và ngoài nước chia sẻ báo cáo nghiên cứu và công nghệ mới.
+- **Đào tạo y khoa liên tục (CME)**: Khóa tập huấn, bổ túc tay nghề, cấp chứng nhận CME duy trì chứng chỉ hành nghề (CCHN).
+- **Mổ demo & Chuyển giao công nghệ**: Phiên đào tạo thực hành, quan sát ca mổ thực tế từ các chuyên gia đầu ngành trong và ngoài nước.
+
+### ② Quản lý Nghề nghiệp & Bảo vệ Hội viên
+- **Xây dựng chuẩn mực hành nghề**: Thúc đẩy tuân thủ y đức, an toàn y khoa và chấp hành quy định pháp luật.
+- **Bảo vệ quyền lợi**: Đại diện bảo vệ quyền và lợi ích hợp pháp của bác sĩ hội viên khi hành nghề.
+- **Tư vấn & Hỗ trợ chuyên môn**: Đầu mối kết nối chuyên gia tư vấn ca khó, sự cố y khoa.
+
+### ③ Hợp tác Quốc tế & Mở rộng Mạng lưới
+- **Kết nối quốc tế**: Hợp tác với các tổ chức uy tín thế giới (Hàn Quốc, Mỹ, Châu Âu, ISAPS) đưa y học thẩm mỹ Việt Nam tiếp cận tiêu chuẩn quốc tế.
+- **Liên kết doanh nghiệp & Công nghệ**: Hợp tác với các đơn vị trang thiết bị y tế, dược phẩm, vật liệu thẩm mỹ chính hãng.
+
+### ④ Tuyên truyền & Định hướng Cộng đồng
+- **Phổ biến kiến thức làm đẹp an toàn**: Định hướng công chúng phân biệt PTTM chuẩn y khoa và các cơ sở "chui", kém chất lượng.
+- **Tư vấn chính sách**: Phối hợp, đóng góp ý kiến với **Sở Y tế TP.HCM** và **Bộ Y tế** trong việc xây dựng văn bản quy phạm pháp luật, quy chuẩn kỹ thuật chuyên ngành.
+
+---
+
+## 💳 3. Chính Sách Hội Viên & Hội Phí (Member Portal & Dues)
+
+- **Trang Portal Hội viên**: `/hoi-vien`
+- **Mức Hội phí niêm yết**: **2.500.000 VNĐ / năm** (Hội phí thường niên)
+- **9 Quyền lợi chính của Hội viên**:
+  1. *Tham gia hội nghị & hội thảo* (Chi phí ưu đãi/miễn phí)
+  2. *Cập nhật kiến thức & Cấp chứng nhận CME* (Duy trì điều kiện hành nghề)
+  3. *Bảo vệ quyền lợi hợp pháp trong khám chữa bệnh*
+  4. *Tư vấn chuyên môn & Y khoa từ Ban chấp hành và chuyên gia đầu ngành*
+  5. *Khẳng định thương hiệu cá nhân/đơn vị chính thống*
+  6. *Giao lưu & Mở rộng mạng lưới với bác sĩ trong và ngoài nước*
+  7. *Thảo luận & Đóng góp ý kiến xây dựng chính sách ngành*
+  8. *Quyền ứng cử, bầu cử vào Ban Chấp hành*
+  9. *Cung cấp bản tin, tạp chí khoa học & thông tin thường kỳ*
+
+---
+
+## 🤝 4. Quyền Lợi Doanh Nghiệp & Nhà Tài Trợ (Corporate Sponsorship Benefits)
+
+- **Trang Đối tác & Nhà tài trợ**: `/doi-tac`
+- **Các Hạng mức Tài trợ**: Kim Cương, Vàng, Bạc, Đồng hành
+- **4 Nhóm Quyền lợi Doanh nghiệp**:
+  1. *Hiển thị Thương hiệu & Banner VIP*: Đặt logo trang trọng tại Footer/Trang chủ, Banner VIP (Header/Sidebar) dẫn trực tiếp về website doanh nghiệp.
+  2. *Bài viết PR & Truyền thông SEO*: Trang doanh nghiệp riêng giới thiệu chứng nhận (FDA, CE, ISO,...), bài viết nghiên cứu/Case study lâm sàng, đính kèm Backlink chuẩn SEO.
+  3. *Bảo chứng & Uy tín Y khoa*: Xác nhận sản phẩm chính hãng, được cấp quyền sử dụng danh xưng *"Đơn vị đồng hành cùng HSAPS năm..."*.
+  4. *Lưu trữ Kỷ yếu Vĩnh viễn & Social Media*: Lưu trữ hình ảnh/logo tài trợ vĩnh viễn trên website; đồng bộ chia sẻ qua Fanpage, Zalo OA và Email Newsletter gửi bác sĩ.
+
+---
+
+## 💻 5. Kiến Trúc Kỹ Thuật (Technical Architecture)
+
+### Technology Stack
+- **Framework**: Next.js 14+ (App Router), React 18, TypeScript
+- **Styling**: Tailwind CSS v4, Vanilla CSS variables (`globals.css`), Lucide React icons, Motion (`motion/react`)
+- **Database & ORM**: PostgreSQL (Supabase) + Prisma ORM
+- **Authentication**: NextAuth.js (Session state + Role-based Access Control - RBAC)
+- **File Upload**: API route `/api/upload` tích hợp Supabase Storage (bucket `images`)
+- **CMS State**: LocalStorage key `cms_trang_chu_v2` với 8 section editor sống động
+
+### Phân quyền hệ thống (RBAC)
+- `ADMIN`: Quản trị viên toàn hệ thống (Bắt buộc gán cho `admin@hsaps.org.vn`).
+- `EDITOR`: Bác sĩ / Biên tập viên (chỉ quản lý bài viết, báo cáo KH và hồ sơ cá nhân).
+- `GUEST`: Khách ghé thăm / Thành viên chưa xác thực (Không truy cập `/admin`).
+
+---
+
+## 📁 6. Cấu Trúc Thư Mục Dự Án (Directory Structure)
 
 ```text
 ├── app/
-│   ├── actions/          # Server Actions kết nối CSDL (doctor, event, news, category...)
-│   ├── admin/            # CMS quản lý nội dung phân quyền (Sidebar, Editor, Dashboard)
+│   ├── actions/          # Server Actions (doctor, event, news, category...)
+│   ├── admin/            # CMS Dashboard quản lý phân quyền (Header, Sidebar, ThemeWrapper)
+│   │   ├── trang-chu/    # Module CMS Quản lý 8 section trang chủ
+│   │   └── page.tsx      # Admin Dashboard tổng quan
 │   ├── api/
 │   │   ├── auth/         # NextAuth endpoint
-│   │   ├── upload/       # API xử lý upload ảnh lên Supabase Storage
-│   │   └── lien-he/      # API dispatch email liên hệ qua Resend
-│   ├── login/            # Trang đăng nhập & Đăng ký đa bước (Canvas ký tên, QR Thanh toán)
-│   └── page.tsx          # Giao diện Trang chủ công khai HSAPS
-├── components/           # Component dùng chung (Header, Footer, ConditionalLayout, Providers)
-├── lib/                  # Centralized utilities (prisma, mail, auth, mock data)
+│   │   └── upload/       # API Upload ảnh lên Supabase Storage
+│   ├── bao-cao-khoa-hoc/ # Trang Báo cáo khoa học & Tạp chí Y học
+│   ├── doi-tac/          # Trang Đối tác, Nhà tài trợ & Quyền lợi doanh nghiệp
+│   ├── gioi-thieu/       # Trang Giới thiệu HSAPS & 4 mảng hoạt động trọng tâm
+│   ├── hoi-vien/         # Trang Portal Hội viên & 9 Quyền lợi (Hội phí 2.500.000đ/năm)
+│   ├── lien-he/          # Trang Liên hệ & Form tư vấn
+│   ├── login/            # Trang Đăng nhập & Đăng ký đa bước (Canvas ký tên, QR phí)
+│   ├── globals.css       # Cấu hình Tailwind v4, Fluid typography, Custom scrollbar
+│   ├── layout.tsx        # Root layout, Manrope Google Font, SEO Metadata
+│   └── page.tsx          # Trang chủ công khai (render HomepageClient CMS)
+├── components/           # UI Components (Header, Footer, HomepageClient, EventSlider, HcmcSkyline)
+├── lib/                  # Utilities (prisma, useCmsData, data)
 ├── prisma/
-│   ├── schema.prisma     # Định nghĩa cấu trúc bảng CSDL PostgreSQL
-│   └── seed.ts           # Script nạp dữ liệu mẫu ban đầu
-└── .env                  # Tệp cấu hình các biến môi trường bảo mật
+│   ├── schema.prisma     # PostgreSQL Database Schema
+│   └── seed.ts           # Script khởi tạo dữ liệu mặc định
+└── .env.local            # Biến môi trường kết nối Supabase, NextAuth
 ```
 
 ---
 
-## 🛠️ Hướng Dẫn Cài Đặt & Chạy Cục Bộ
+## ⚙️ 7. Hướng Dẫn Chạy & Phát Triển Cục Bộ (Local Development)
 
-### 1. Yêu cầu hệ thống
-- **Node.js** phiên bản 18 trở lên.
-- Một dự án **Supabase** đang hoạt động (Đăng ký miễn phí tại [supabase.com](https://supabase.com)).
-
-### 2. Cài đặt Dependencies
-Mở terminal tại thư mục dự án và chạy:
 ```bash
+# 1. Cài đặt thư viện
 npm install
-```
 
-### 3. Thiết lập Biến môi trường
-Tạo tệp `.env` tại thư mục gốc của dự án và điền thông số kết nối của bạn:
-```env
-# URL kết nối cơ sở dữ liệu Supabase (Sử dụng Connection Pooler của Supabase)
-DATABASE_URL="postgresql://postgres.[Mã_dự_án]:[Mật_khẩu_db]@aws-0-[Vùng].pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"
+# 2. Cấu hình .env.local (Supabase URL, Anon Key, NextAuth Secret, Database URL)
 
-# NextAuth Security
-NEXTAUTH_SECRET="hsaps-super-secret-key-3000"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Cấu hình khóa Supabase cho Client-side để upload ảnh lên Storage
-NEXT_PUBLIC_SUPABASE_URL="https://[Mã_dự_án].supabase.co"
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="sb_publishable_..."
-
-# (Tùy chọn) Gửi thư tự động qua Resend
-# RESEND_API_KEY="re_..."
-```
-
-### 4. Đồng bộ Cấu trúc Bảng & Khởi tạo Dữ liệu
-Chạy các câu lệnh sau để đẩy schema lên Supabase và nạp dữ liệu bác sĩ, bài viết y khoa mặc định:
-```bash
-# Đẩy schema lên CSDL Supabase
+# 3. Đồng bộ schema Prisma lên Database
 npx prisma db push
 
-# Nạp dữ liệu Seeding ban đầu
+# 4. Nạp dữ liệu mặc định
 npx prisma db seed
-```
 
-### 5. Chạy dự án ở chế độ Phát triển
-Khởi chạy Server cục bộ:
-```bash
+# 5. Khởi chạy dev server
 npm run dev
 ```
-Truy cập ứng dụng tại đường dẫn: `http://localhost:3000`
 
 ---
 
-## 🔐 Tài Khoản Quản Trị Mặc Định (Sau khi chạy Seed)
-- **Tài khoản**: `admin@hsaps.org.vn`
-- **Mật khẩu**: `admin123@hsaps`
+## 🤖 8. Quy Tắc Dành Cho AI Agent (Rules for AI Agents)
+
+When making modifications or adding new features:
+1. **Always preserve official terminology**: Always refer to the organization as *"Liên chi hội Phẫu thuật Tạo hình Thẩm mỹ TP.HCM (HSAPS)"* and mention its historical role as the core predecessor of *VSAPS*.
+2. **Respect the 4 Operational Focus Areas**: When designing UI elements or content, align with the 4 pillars (Training & CME, Career Management & Protection, International Collaboration, Community Education & Policy Consultation).
+3. **Keep Member Dues accurate**: Membership fee is strictly **2.500.000 VNĐ / năm**.
+4. **Maintain Responsive Fluid Layouts**: Always use standard Tailwind responsive breakpoints (`sm:`, `md:`, `lg:`) and fluid typography (`fluid-h1`, `fluid-h2`, `fluid-body`).
+5. **Preserve Admin RBAC & Master Account**: Keep `admin@hsaps.org.vn` as the Master Administrator.
+6. **No Breaking Changes to Storage**: Ensure uploaded images go through `/api/upload` (Supabase Storage).
