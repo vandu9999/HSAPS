@@ -54,7 +54,25 @@ export const authOptions: NextAuthOptions = {
 
             if (signInError) {
               console.error('❌ Supabase signInWithPassword error:', signInError.message);
-              // Trả về thông báo thân thiện thay vì lộ lỗi nội bộ
+              // Nối fallback tới Prisma DB nếu Supabase Auth không có user này
+              if (process.env.DATABASE_URL) {
+                const user = await prisma.user.findUnique({
+                  where: { email: credentials.email },
+                });
+                if (user) {
+                  const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+                  if (isPasswordValid) {
+                    const lowerEmail = user.email.toLowerCase();
+                    const role = (lowerEmail === 'admin@hsaps.org.vn' || lowerEmail === 'admin@admin.com') ? 'admin' : user.role;
+                    return {
+                      id: user.id,
+                      email: user.email,
+                      name: user.name || 'Quản trị viên',
+                      role: role,
+                    };
+                  }
+                }
+              }
               throw new Error('Email hoặc mật khẩu không chính xác');
             }
 
