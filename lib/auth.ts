@@ -88,7 +88,7 @@ export const authOptions: NextAuthOptions = {
             if (process.env.DATABASE_URL) {
               try {
                 const userProfile = await prisma.user.findUnique({
-                  where: { id: authUserId },
+                  where: { email: signInData.user.email || credentials.email },
                 });
 
                 if (userProfile) {
