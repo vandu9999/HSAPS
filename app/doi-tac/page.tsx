@@ -11,7 +11,18 @@ import {
   Award, 
   Search, 
   ChevronRight, 
-  SlidersHorizontal 
+  SlidersHorizontal,
+  Sparkles,
+  FileText,
+  Share2,
+  CheckCircle2,
+  ExternalLink,
+  Layers,
+  Archive,
+  BarChart2,
+  BadgeCheck,
+  ShieldCheck,
+  Megaphone
 } from 'lucide-react';
 import { PARTNERS_DATA } from '@/lib/data';
 import PartnerLogo from '@/components/PartnerLogo';
@@ -47,7 +58,7 @@ export default function PartnersListingPage() {
     <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-[#fdf8fa] dark:bg-[#1a1016] text-[#2d1a24] dark:text-white font-sans">
       
       <main className="flex-grow py-8 lg:py-12 px-4 sm:px-6 lg:px-10">
-        <div className="mx-auto max-w-[1440px] space-y-10">
+        <div className="mx-auto max-w-[1440px] space-y-12">
           
           {/* Header Banner */}
           <div className="bg-gradient-to-r from-[#2d1220] via-[#1a1016] to-[#2d1220] p-8 sm:p-12 rounded-3xl text-white shadow-md relative overflow-hidden border border-[#ec297b]/20">
@@ -56,15 +67,140 @@ export default function PartnersListingPage() {
               <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-amber-500 blur-2xl"></div>
             </div>
             <div className="relative z-10 max-w-3xl space-y-4">
-              <span className="text-xs font-bold uppercase tracking-widest bg-[#ec297b]/20 px-3.5 py-1.5 rounded-full backdrop-blur-sm text-pink-300 border border-[#ec297b]/30">
-                Mạng lưới liên kết
+              <span className="text-xs font-bold uppercase tracking-widest bg-[#ec297b]/20 px-3.5 py-1.5 rounded-full backdrop-blur-sm text-pink-300 border border-[#ec297b]/30 inline-flex items-center gap-1.5">
+                <Sparkles className="size-3.5" /> Mạng lưới liên kết & Hợp tác Doanh nghiệp
               </span>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
                 Đối tác &amp; Nhà tài trợ
               </h1>
               <p className="text-sm sm:text-base text-pink-100 max-w-xl font-medium leading-relaxed">
-                Đồng hành cùng HSAPS trong việc cập nhật thiết bị y khoa tiên tiến, vật liệu tạo hình cao cấp và phát triển công nghệ thẩm mỹ an toàn tại Việt Nam.
+                Đồng hành cùng HSAPS trong việc cập nhật thiết bị y khoa tiên tiến, vật liệu tạo hình cao cấp và nâng cao vị thế thương hiệu trên cổng thông tin chính thống.
               </p>
+            </div>
+          </div>
+
+          {/* SECTION: BẢNG QUYỀN LỢI ĐỒNG HÀNH & TÀI TRỢ DOANH NGHIỆP */}
+          <div className="space-y-8">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className="inline-block rounded-full bg-pink-100 px-3.5 py-1 text-xs font-bold text-primary dark:bg-pink-900/30 dark:text-pink-300">
+                Giá Trị Thương Hiệu Lâu Dài
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2d1a24] dark:text-white">
+                Quyền Lợi Doanh Nghiệp Đồng Hành Cùng Website HSAPS
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                Gia tăng độ uy tín, bảo chứng y khoa và tiếp cận vĩnh viễn cộng đồng bác sĩ chuyên khoa trên nền tảng chính thức của Hội
+              </p>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {/* Quyền lợi 1 */}
+              <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-[#ec297b]/15 dark:border-[#ec297b]/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                <div className="space-y-4">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-pink-50 text-primary dark:bg-pink-950/40">
+                    <Megaphone className="size-6" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Quyền lợi 01</span>
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mt-1">
+                      Hiển thị Thương hiệu & Banner
+                    </h3>
+                  </div>
+                  <ul className="space-y-2.5 text-xs text-gray-600 dark:text-gray-300">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
+                      <span><strong>Logo trang trọng:</strong> Hiển thị liên tục tại Footer &amp; Section Đối tác chiến lược trang chủ.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
+                      <span><strong>Banner VIP:</strong> Gói Kim Cương/Vàng đặt banner tĩnh/động tại Header/Sidebar liên kết website thương hiệu.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
+                      <span><strong>Phân cấp danh vị:</strong> Sắp xếp vị trí logo chuẩn xác theo gói Kim Cương, Vàng, Bạc, Đồng hành.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Quyền lợi 2 */}
+              <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-[#ec297b]/15 dark:border-[#ec297b]/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                <div className="space-y-4">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/40">
+                    <FileText className="size-6" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest">Quyền lợi 02</span>
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mt-1">
+                      Bài viết PR &amp; Truyền thông SEO
+                    </h3>
+                  </div>
+                  <ul className="space-y-2.5 text-xs text-gray-600 dark:text-gray-300">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                      <span><strong>Trang doanh nghiệp riêng:</strong> Bài viết chi tiết dòng sản phẩm &amp; chứng nhận chất lượng (FDA, CE, ISO,...).</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                      <span><strong>Bài viết chuyên môn &amp; Case Study:</strong> Công bố nghiên cứu lâm sàng, công nghệ mới tiếp cận trực tiếp bác sĩ.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                      <span><strong>Gắn Backlink SEO:</strong> Bài viết đính kèm link dofollow/nofollow chuẩn SEO về website chính doanh nghiệp.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Quyền lợi 3 */}
+              <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-[#ec297b]/15 dark:border-[#ec297b]/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                <div className="space-y-4">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/40">
+                    <ShieldCheck className="size-6" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-purple-600 uppercase tracking-widest">Quyền lợi 03</span>
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mt-1">
+                      Bảo chứng &amp; Uy tín Y khoa
+                    </h3>
+                  </div>
+                  <ul className="space-y-2.5 text-xs text-gray-600 dark:text-gray-300">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-purple-600 shrink-0 mt-0.5" />
+                      <span><strong>Bảo chứng chính thống:</strong> Khẳng định sản phẩm/công nghệ chính hãng, an toàn và đạt tiêu chuẩn lưu hành.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-purple-600 shrink-0 mt-0.5" />
+                      <span><strong>Bộ nhận diện chính thức:</strong> Được cấp quyền sử dụng danh xưng &quot;Nhà tài trợ / Đơn vị đồng hành cùng HSAPS năm...&quot;.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Quyền lợi 4 */}
+              <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-[#ec297b]/15 dark:border-[#ec297b]/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                <div className="space-y-4">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40">
+                    <Archive className="size-6" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest">Quyền lợi 04</span>
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mt-1">
+                      Duy trì Truyền thông Vĩnh viễn
+                    </h3>
+                  </div>
+                  <ul className="space-y-2.5 text-xs text-gray-600 dark:text-gray-300">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <span><strong>Lưu trữ Kỷ yếu sự kiện:</strong> Hình ảnh &amp; Logo đồng hành sự kiện lưu trữ vĩnh viễn trên website để tra cứu.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <span><strong>Tích hợp Kênh Social &amp; Newsletter:</strong> Chia sẻ thông tin tài trợ lên Fanpage, Zalo OA và Email Newsletter bác sĩ.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -124,6 +260,21 @@ export default function PartnersListingPage() {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Call for Sponsorship CTA Box */}
+              <div className="bg-gradient-to-br from-pink-500 to-rose-600 p-6 rounded-2xl text-white space-y-3 shadow-md">
+                <BadgeCheck className="size-8 text-yellow-300" />
+                <h4 className="text-sm font-extrabold">Đăng ký trở thành Nhà tài trợ HSAPS</h4>
+                <p className="text-xs text-pink-100 leading-relaxed">
+                  Nhận trọn bộ hồ sơ mời tài trợ hội nghị &amp; cơ hội hợp tác truyền thông y khoa chính thống.
+                </p>
+                <Link
+                  href="/lien-he"
+                  className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-white text-primary text-xs font-bold rounded-xl shadow hover:bg-pink-50 transition-colors"
+                >
+                  Liên hệ hợp tác
+                </Link>
               </div>
             </div>
 
