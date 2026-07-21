@@ -31,25 +31,58 @@ body {
   }
 }
 
-/* ── Responsive Typography Scale ─────────────────────────────────────────── */
-/* Fluid heading sizes for pleasant reading on every viewport */
+/* ── Responsive Typography Scale (Native App Feel - Refined & Delicate) ────── */
+/* Scale font-size tinh tế, trang nhã, vừa vặn tuyệt đối trên màn hình điện thoại */
 .fluid-h1 {
-  font-size: clamp(1.625rem, 4vw + 0.5rem, 3.75rem); /* 26px → 60px */
-  line-height: 1.15;
+  font-size: clamp(1.375rem, 3.5vw + 0.35rem, 3.25rem); /* Mobile: ~22px -> Tablet: 32px -> Desktop: 52px */
+  line-height: 1.2;
   letter-spacing: -0.02em;
 }
 .fluid-h2 {
-  font-size: clamp(1.25rem, 2.5vw + 0.5rem, 2.25rem); /* 20px → 36px */
-  line-height: 1.25;
+  font-size: clamp(1.125rem, 2vw + 0.35rem, 2rem); /* Mobile: ~18px -> Tablet: 24px -> Desktop: 32px */
+  line-height: 1.28;
   letter-spacing: -0.015em;
 }
 .fluid-h3 {
-  font-size: clamp(1rem, 1.5vw + 0.25rem, 1.25rem); /* 16px → 20px */
+  font-size: clamp(0.95rem, 1.2vw + 0.2rem, 1.2rem); /* Mobile: ~15px -> Desktop: 19px */
   line-height: 1.35;
 }
 .fluid-body {
-  font-size: clamp(0.875rem, 1vw + 0.25rem, 1.125rem); /* 14px → 18px */
-  line-height: 1.7;
+  font-size: clamp(0.8125rem, 0.75vw + 0.2rem, 1rem); /* Mobile: ~13px -> Desktop: 16px */
+  line-height: 1.6;
+}
+
+/* ── Mobile App UX/UI Enhancements ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Dynamic font-size cap cho toàn bộ ứng dụng mobile */
+  html {
+    font-size: 14.5px;
+  }
+  
+  /* Cảm giác cuộn như Native App iOS / Android */
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Phản hồi chạm (Active Press) mượt mà như app thật */
+  button:active, a:active {
+    opacity: 0.82;
+    transform: scale(0.985);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s ease;
+  }
+
+  /* Tối ưu thẻ card hiển thị gọn gàng trên màn hình nhỏ */
+  .mobile-app-card {
+    border-radius: 1rem !important;
+    padding: 1rem !important;
+  }
+
+  /* Tiêu đề mục nhỏ nhắn & tinh tế */
+  h1, h2, h3, h4 {
+    letter-spacing: -0.01em;
+  }
 }
 
 

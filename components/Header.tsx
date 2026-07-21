@@ -72,15 +72,15 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-accent-bg bg-white/90 backdrop-blur-md dark:border-pink-900/30 dark:bg-background-dark/95">
-        <div className="mx-auto flex h-16 sm:h-20 max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto flex h-14 sm:h-20 max-w-[1440px] items-center justify-between px-3.5 sm:px-6 lg:px-10">
 
           {/* ── Logo ────────────────────────────────────────────────────── */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 hover:opacity-90 transition-opacity">
-            <div className="flex size-9 sm:size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Stethoscope className="size-5 sm:size-6" />
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-90 transition-opacity">
+            <div className="flex size-8 sm:size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Stethoscope className="size-4 sm:size-6" />
             </div>
             <div>
-              <h1 className="font-display text-lg sm:text-xl font-bold leading-tight tracking-tight text-text-main dark:text-white">HSAPS</h1>
+              <h1 className="font-display text-base sm:text-xl font-bold leading-tight tracking-tight text-text-main dark:text-white">HSAPS</h1>
               <p className="text-[9px] sm:text-[10px] font-medium text-text-secondary uppercase tracking-widest hidden sm:block">Ho Chi Minh City Society</p>
             </div>
           </Link>
