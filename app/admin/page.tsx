@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   CalendarDays, Users, Handshake, Settings, TrendingUp,
   Edit3, BookOpen, ArrowRight, Activity, CheckCircle,
   Newspaper, Tags, Home, ArrowUpRight,
   FileText, Globe, Zap, Shield, Eye, MousePointerClick,
-  AlertCircle, ChevronRight, Star, Award,
+  AlertCircle, ChevronRight, Star, Award, ChevronLeft,
+  MapPin, Sparkles,
 } from 'lucide-react';
 
 // ─── Static Data ──────────────────────────────────────────────────────────────
@@ -120,6 +122,147 @@ function SparkBar({ data, color }: { data: number[]; color: string }) {
         className="w-1 rounded-sm opacity-100"
         style={{ height: `${(data[data.length - 1] / max) * 100}%`, backgroundColor: color }}
       />
+    </div>
+  );
+// ─── Hero Event Slider Component ──────────────────────────────────────────────
+
+const HERO_SLIDER_EVENTS = [
+  {
+    id: 'evt-1',
+    title: 'Hội nghị Khoa học Quốc tế HSAPS 2025',
+    date: '20 Tháng 12, 2025',
+    location: 'GEM Center, TP.HCM',
+    badge: 'Đang mở đăng ký',
+    cme: '12 CME',
+    href: '/admin/su-kien',
+  },
+  {
+    id: 'evt-2',
+    title: 'Workshop: Kỹ thuật Nâng ngực nội soi',
+    date: '05 Tháng 01, 2026',
+    location: 'Khách sạn REX, TP.HCM',
+    badge: 'Sắp diễn ra',
+    cme: '6 CME',
+    href: '/admin/su-kien',
+  },
+  {
+    id: 'evt-3',
+    title: 'Webinar: Ứng dụng AI trong phẫu thuật thẩm mỹ',
+    date: '15 Tháng 01, 2026',
+    location: 'Trực tuyến (Zoom Pro)',
+    badge: 'Miễn phí Hội viên',
+    cme: '4 CME',
+    href: '/admin/su-kien',
+  },
+];
+
+function HeroEventSlider() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % HERO_SLIDER_EVENTS.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const currentEvent = HERO_SLIDER_EVENTS[currentIndex];
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + HERO_SLIDER_EVENTS.length) % HERO_SLIDER_EVENTS.length);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % HERO_SLIDER_EVENTS.length);
+  };
+
+  return (
+    <div className="hidden lg:block relative min-w-[290px] max-w-[330px]">
+      <div className="relative overflow-hidden rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 p-5 shadow-2xl shadow-black/20 text-white">
+        {/* Navigation & Header */}
+        <div className="flex items-center justify-between mb-3 border-b border-white/15 pb-2.5">
+          <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-amber-300">
+            <Sparkles className="size-3" />
+            Sự kiện nổi bật
+          </span>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handlePrev}
+              className="flex size-6 items-center justify-center rounded-lg bg-white/10 hover:bg-white/25 text-white transition-all cursor-pointer"
+              title="Sự kiện trước"
+            >
+              <ChevronLeft className="size-3.5" />
+            </button>
+            <span className="text-[10px] font-mono font-bold text-white/70 px-1">
+              {currentIndex + 1}/{HERO_SLIDER_EVENTS.length}
+            </span>
+            <button
+              onClick={handleNext}
+              className="flex size-6 items-center justify-center rounded-lg bg-white/10 hover:bg-white/25 text-white transition-all cursor-pointer"
+              title="Sự kiện tiếp"
+            >
+              <ChevronRight className="size-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Animated Slide Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentEvent.id}
+            initial={{ opacity: 0, x: 15 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -15 }}
+            transition={{ duration: 0.25 }}
+            className="space-y-3"
+          >
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-white/20 backdrop-blur px-2.5 py-0.5 text-[10px] font-bold text-white border border-white/30">
+                {currentEvent.badge}
+              </span>
+              <span className="rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 text-[10px] font-black">
+                {currentEvent.cme}
+              </span>
+            </div>
+
+            <h4 className="text-sm font-bold text-white leading-snug line-clamp-2 min-h-[40px]">
+              {currentEvent.title}
+            </h4>
+
+            <div className="space-y-1 text-xs text-white/80 font-medium pt-2 border-t border-white/10">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="size-3.5 text-pink-300 shrink-0" />
+                <span>{currentEvent.date}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="size-3.5 text-sky-300 shrink-0" />
+                <span className="truncate">{currentEvent.location}</span>
+              </div>
+            </div>
+
+            <Link
+              href={currentEvent.href}
+              className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl bg-white px-3 py-2 text-xs font-bold text-[#ec297b] shadow hover:bg-white/90 transition-all group"
+            >
+              Xem chi tiết sự kiện
+              <ArrowUpRight className="size-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Pagination Dots */}
+        <div className="flex items-center justify-center gap-1.5 mt-3 pt-1">
+          {HERO_SLIDER_EVENTS.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentIndex(idx)}
+              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === currentIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/30 hover:bg-white/60'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -244,22 +387,8 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Calendar widget */}
-            <div className="hidden lg:block">
-              <div className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 p-5 min-w-[180px] text-right">
-                <p className="text-[11px] font-bold text-white/60 uppercase tracking-widest mb-1">
-                  {time.toLocaleDateString('vi-VN', { weekday: 'long' })}
-                </p>
-                <p className="text-5xl font-black text-white leading-none">{time.getDate()}</p>
-                <p className="text-sm font-semibold text-white/70 mt-1">
-                  {time.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}
-                </p>
-                <div className="mt-3 pt-3 border-t border-white/20">
-                  <p className="text-[10px] text-white/50">Sự kiện hôm nay</p>
-                  <p className="text-xs font-bold text-amber-300 mt-0.5">2 sự kiện</p>
-                </div>
-              </div>
-            </div>
+            {/* Event Carousel Slider Widget */}
+            <HeroEventSlider />
           </div>
         </div>
 
