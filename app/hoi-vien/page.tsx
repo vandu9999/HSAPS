@@ -163,9 +163,9 @@ const BENEFIT_GROUPS: BenefitGroup[] = [
 ];
 
 const STATS = [
+  { value: '2.500.000đ', label: 'Hội phí / năm', icon: Award },
   { value: '500+', label: 'Hội viên chính thức', icon: Users },
   { value: '15+', label: 'Năm hoạt động', icon: TrendingUp },
-  { value: '50+', label: 'Hội nghị đã tổ chức', icon: CalendarCheck },
   { value: '1.000+', label: 'Bài báo khoa học', icon: BookOpen },
 ];
 
@@ -598,12 +598,15 @@ export default function HoiVienPage() {
                   'Là bác sĩ có bằng tốt nghiệp y khoa hợp lệ',
                   'Có chứng chỉ hành nghề khám chữa bệnh còn hiệu lực',
                   'Đang hoặc đã hoạt động trong lĩnh vực phẫu thuật thẩm mỹ',
+                  'Hội phí thường niên: 2.500.000 VNĐ / năm',
                   'Cam kết tuân thủ điều lệ và quy tắc đạo đức nghề nghiệp',
                   'Được ít nhất một hội viên chính thức giới thiệu (khuyến khích)',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-text-secondary dark:text-gray-400">
                     <Check className="size-4 shrink-0 mt-0.5 text-emerald-500" />
-                    {item}
+                    <span className={item.includes('2.500.000') ? 'font-bold text-primary dark:text-[#ec297b]' : ''}>
+                      {item}
+                    </span>
                   </li>
                 ))}
               </ul>
