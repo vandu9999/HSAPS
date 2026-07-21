@@ -13,7 +13,6 @@ import {
   Settings,
   ChevronRight,
   Stethoscope,
-  ExternalLink,
   BookOpen,
   Newspaper,
   Tags,
@@ -191,8 +190,8 @@ export default function AdminSidebar({
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-white/[0.06] space-y-2">
-        {toggleTheme && (
+      {toggleTheme && (
+        <div className="p-4 border-t border-white/[0.06]">
           <button
             onClick={toggleTheme}
             className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-all text-xs font-semibold"
@@ -205,27 +204,8 @@ export default function AdminSidebar({
               {theme === 'light' ? 'Dark' : 'Light'}
             </span>
           </button>
-        )}
-        <Link
-          href="/"
-          target="_blank"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-all text-xs font-medium"
-        >
-          <ExternalLink className="size-3.5" />
-          Xem trang chủ
-        </Link>
-        <div className="mt-3 flex items-center gap-2.5 px-2">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#ec297b]/30 to-[#fcd34d]/30 text-[10px] font-bold text-white uppercase">
-            {(userName || 'U').charAt(0)}
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-white/70 truncate">{userName}</p>
-            <p className="text-[9px] text-[#ec297b] font-bold uppercase tracking-wider">
-              {userRole === 'ADMIN' ? 'Ban Quản Trị' : 'Bác sĩ Hội viên'}
-            </p>
-          </div>
         </div>
-      </div>
+      )}
     </aside>
   );
 }

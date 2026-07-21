@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import {
-  BarChart3, Bell, Clock, Sun, Moon,
+  BarChart3, Bell, Clock, Sun, Moon, ExternalLink,
 } from 'lucide-react';
 
 // ─── Global Admin Top Bar ─────────────────────────────────────────────────────
@@ -70,6 +71,16 @@ function GlobalTopBar({
             <Moon className="size-3.5" />
           )}
         </button>
+
+        {/* External Link: Xem trang chủ */}
+        <Link
+          href="/"
+          target="_blank"
+          title="Xem trang chủ"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.03] text-white/40 hover:text-white hover:bg-white/[0.08] transition-all"
+        >
+          <ExternalLink className="size-3.5" />
+        </Link>
 
         {/* Notification */}
         <button className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.03] text-white/40 hover:text-white hover:bg-white/[0.08] transition-all">
