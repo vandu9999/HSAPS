@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: hsaps-portal
+    runtime: node
+    region: singapore
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production
