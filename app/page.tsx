@@ -38,36 +38,36 @@ export default function Home() {
                 </span>
                 Hội nghị thường niên 2024 sắp diễn ra
               </div>
-              <h1 className="font-display text-4xl font-extrabold leading-[1.15] tracking-tight text-text-main dark:text-white sm:text-5xl lg:text-6xl">
+              <h1 className="fluid-h1 font-display font-extrabold text-text-main dark:text-white">
                 Hội Phẫu thuật Thẩm mỹ <span className="text-primary">TP. Hồ Chí Minh</span>
               </h1>
-              <p className="text-lg leading-relaxed text-text-secondary dark:text-gray-400">
+              <p className="fluid-body leading-relaxed text-text-secondary dark:text-gray-400">
                 Kết nối chuyên gia, phát triển khoa học và thiết lập tiêu chuẩn vàng trong y học thẩm mỹ. Chúng tôi cam kết nâng cao chất lượng chuyên môn và đạo đức nghề nghiệp.
               </p>
-              <div className="mt-4 flex flex-wrap gap-4">
-                <Link href="/login" className="flex h-12 min-w-[160px] items-center justify-center gap-2 rounded-lg bg-primary px-6 text-base font-bold text-white shadow-md transition-transform hover:scale-105 hover:bg-primary-dark active:scale-95">
-                  <UserPlus className="size-5" />
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link href="/login" className="flex h-11 flex-1 sm:flex-none sm:min-w-[160px] items-center justify-center gap-2 rounded-lg bg-primary px-5 sm:px-6 text-sm sm:text-base font-bold text-white shadow-md transition-transform hover:scale-105 hover:bg-primary-dark active:scale-95">
+                  <UserPlus className="size-4 sm:size-5" />
                   Đăng ký Hội viên
                 </Link>
-                <button className="flex h-12 min-w-[160px] items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-6 text-base font-bold text-text-main shadow-sm transition-colors hover:bg-gray-50 hover:border-gray-300 dark:bg-transparent dark:border-gray-700 dark:text-white dark:hover:bg-gray-800">
+                <button className="flex h-11 flex-1 sm:flex-none sm:min-w-[160px] items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-5 sm:px-6 text-sm sm:text-base font-bold text-text-main shadow-sm transition-colors hover:bg-gray-50 hover:border-gray-300 dark:bg-transparent dark:border-gray-700 dark:text-white dark:hover:bg-gray-800">
                   <span>Tìm hiểu thêm</span>
-                  <ArrowRight className="size-5" />
+                  <ArrowRight className="size-4 sm:size-5" />
                 </button>
               </div>
-              <div className="mt-8 flex items-center gap-8 border-t border-dashed border-gray-200 pt-8 dark:border-gray-800">
+              <div className="mt-6 flex items-center gap-4 sm:gap-8 border-t border-dashed border-gray-200 pt-6 sm:pt-8 dark:border-gray-800">
                 <div>
-                  <p className="text-2xl font-bold text-text-main dark:text-white">500+</p>
-                  <p className="text-sm font-medium text-text-secondary">Hội viên chính thức</p>
+                  <p className="text-xl sm:text-2xl font-bold text-text-main dark:text-white">500+</p>
+                  <p className="text-xs sm:text-sm font-medium text-text-secondary">Hội viên chính thức</p>
                 </div>
-                <div className="h-8 w-px bg-gray-200 dark:bg-gray-800"></div>
+                <div className="h-7 w-px bg-gray-200 dark:bg-gray-800"></div>
                 <div>
-                  <p className="text-2xl font-bold text-text-main dark:text-white">15+</p>
-                  <p className="text-sm font-medium text-text-secondary">Năm thành lập</p>
+                  <p className="text-xl sm:text-2xl font-bold text-text-main dark:text-white">15+</p>
+                  <p className="text-xs sm:text-sm font-medium text-text-secondary">Năm thành lập</p>
                 </div>
-                <div className="h-8 w-px bg-gray-200 dark:bg-gray-800"></div>
+                <div className="h-7 w-px bg-gray-200 dark:bg-gray-800"></div>
                 <div>
-                  <p className="text-2xl font-bold text-text-main dark:text-white">1k+</p>
-                  <p className="text-sm font-medium text-text-secondary">Bài báo khoa học</p>
+                  <p className="text-xl sm:text-2xl font-bold text-text-main dark:text-white">1k+</p>
+                  <p className="text-xs sm:text-sm font-medium text-text-secondary">Bài báo khoa học</p>
                 </div>
               </div>
             </div>
@@ -107,10 +107,10 @@ export default function Home() {
         <div className="mx-auto max-w-[1440px] px-6 lg:px-10">
           <div className="mb-12 flex flex-col gap-4 text-center sm:text-left sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
-              <h2 className="font-display text-3xl font-bold tracking-tight text-text-main dark:text-white sm:text-4xl">
+              <h2 className="fluid-h2 font-display font-bold text-text-main dark:text-white">
                 Lĩnh vực hoạt động
               </h2>
-              <p className="mt-4 text-lg text-text-secondary dark:text-gray-400">
+              <p className="mt-3 fluid-body text-text-secondary dark:text-gray-400">
                 HSAPS định hướng phát triển toàn diện ngành phẫu thuật thẩm mỹ thông qua các hoạt động nghiên cứu khoa học, đào tạo liên tục và kết nối chuyên gia.
               </p>
             </div>
@@ -120,12 +120,12 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="group relative flex flex-col gap-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+            <div className="group relative flex flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-5 sm:p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-pink-50 text-primary dark:bg-pink-900/30">
                 <Calendar className="size-8" />
               </div>
               <div className="flex flex-col gap-2">
-                <h3 className="text-xl font-bold text-text-main dark:text-white">1. Hội nghị khoa học</h3>
+                <h3 className="fluid-h3 font-bold text-text-main dark:text-white">1. Hội nghị khoa học</h3>
                 <p className="text-base text-text-secondary dark:text-gray-400">
                   Diễn đàn thường niên quy tụ hàng trăm chuyên gia đầu ngành trong và ngoài nước để chia sẻ báo cáo, kinh nghiệm thực tiễn.
                 </p>
@@ -135,13 +135,13 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="group relative flex flex-col gap-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+            <div className="group relative flex flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-5 sm:p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-amber-50 text-secondary dark:bg-amber-900/30">
                 <BookOpen className="size-8" />
               </div>
               <div className="flex flex-col gap-2">
-                <h3 className="text-xl font-bold text-text-main dark:text-white">2. Tạp chí Y khoa</h3>
-                <p className="text-base text-text-secondary dark:text-gray-400">
+                <h3 className="fluid-h3 font-bold text-text-main dark:text-white">2. Tạp chí Y khoa</h3>
+                <p className="text-sm sm:text-base text-text-secondary dark:text-gray-400">
                   Ấn phẩm khoa học chuyên ngành thẩm mỹ uy tín, công bố các nghiên cứu lâm sàng, bài viết học thuật chất lượng.
                 </p>
               </div>
@@ -150,13 +150,13 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="group relative flex flex-col gap-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+            <div className="group relative flex flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-5 sm:p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-pink-50 text-primary dark:bg-pink-900/30">
                 <GraduationCap className="size-8" />
               </div>
               <div className="flex flex-col gap-2">
-                <h3 className="text-xl font-bold text-text-main dark:text-white">3. Đào tạo liên tục (CME)</h3>
-                <p className="text-base text-text-secondary dark:text-gray-400">
+                <h3 className="fluid-h3 font-bold text-text-main dark:text-white">3. Đào tạo liên tục (CME)</h3>
+                <p className="text-sm sm:text-base text-text-secondary dark:text-gray-400">
                   Các lớp học cập nhật kiến thức liên tục và đào tạo chuyên sâu cấp chứng chỉ CME, đáp ứng các tiêu chuẩn khắt khe.
                 </p>
               </div>
@@ -165,13 +165,13 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="group relative flex flex-col gap-6 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+            <div className="group relative flex flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-5 sm:p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-amber-50 text-secondary dark:bg-amber-900/30">
                 <FileText className="size-8" />
               </div>
               <div className="flex flex-col gap-2">
-                <h3 className="text-xl font-bold text-text-main dark:text-white">4. Báo cáo khoa học</h3>
-                <p className="text-base text-text-secondary dark:text-gray-400">
+                <h3 className="fluid-h3 font-bold text-text-main dark:text-white">4. Báo cáo khoa học</h3>
+                <p className="text-sm sm:text-base text-text-secondary dark:text-gray-400">
                   Tổng hợp đề tài sáng kiến y học đột phá, báo cáo ca lâm sàng điển hình và các cải tiến kỹ thuật thực tiễn.
                 </p>
               </div>

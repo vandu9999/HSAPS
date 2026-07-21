@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   CalendarDays, Users, Handshake, Settings, TrendingUp,
@@ -11,6 +12,10 @@ import {
   AlertCircle, ChevronRight, Star, Award, ChevronLeft,
   MapPin, Sparkles,
 } from 'lucide-react';
+import DoctorDashboard from './components/DoctorDashboard';
+import PartnerDashboard from './components/PartnerDashboard';
+import GuestDashboard from './components/GuestDashboard';
+import HcmcSkyline from '@/components/HcmcSkyline';
 
 // ─── Static Data ──────────────────────────────────────────────────────────────
 
@@ -266,12 +271,6 @@ function HeroEventSlider() {
     </div>
   );
 }
-
-import { useSession } from 'next-auth/react';
-import DoctorDashboard from './components/DoctorDashboard';
-import PartnerDashboard from './components/PartnerDashboard';
-import GuestDashboard from './components/GuestDashboard';
-import HcmcSkyline from '@/components/HcmcSkyline';
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 

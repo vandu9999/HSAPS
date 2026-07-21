@@ -23,10 +23,14 @@ import { getDoctorByEmail } from '@/app/actions/doctor';
 
 export default function AdminSidebar({
   theme,
-  toggleTheme
+  toggleTheme,
+  isOpen = false,
+  onClose,
 }: {
   theme?: 'light' | 'dark';
   toggleTheme?: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }) {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -118,7 +122,15 @@ export default function AdminSidebar({
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-[#0d1117] border-r border-white/[0.06] flex flex-col z-50 shadow-2xl">
+    <aside
+      className={`
+        fixed left-0 top-0 h-screen w-72 sm:w-64 bg-[#0d1117] border-r border-white/[0.06]
+        flex flex-col z-40 shadow-2xl
+        transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0
+      `}
+    >
       {/* Logo */}
       <div className="p-5 border-b border-white/[0.06]">
         <div className="flex items-center gap-3">
@@ -144,6 +156,7 @@ export default function AdminSidebar({
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 ${
                 active
                   ? 'bg-[#ec297b]/15 text-[#ec297b]'
@@ -171,6 +184,7 @@ export default function AdminSidebar({
             </p>
             <Link
               href="/admin/cai-dat"
+              onClick={onClose}
               className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 ${
                 isActive('/admin/cai-dat')
                   ? 'bg-[#ec297b]/15 text-[#ec297b]'
