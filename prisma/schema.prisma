@@ -92,6 +92,7 @@ model Partner {
   address      String
   introduction String    @db.Text
   logoType     String?
+  logoUrl      String?
   products     Product[]
   createdAt    DateTime  @default(now())
 }

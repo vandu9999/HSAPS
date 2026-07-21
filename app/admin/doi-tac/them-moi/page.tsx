@@ -23,11 +23,13 @@ type Partner = {
   introduction: string;
   products: Product[];
   logoType?: string;
+  logoUrl?: string;
 };
 
 const EMPTY_PARTNER: Partner = {
   id: '', name: '', category: 'Bạc', description: '', website: '',
   phone: '', email: '', address: '', introduction: '', products: [],
+  logoUrl: '',
 };
 
 const SECTIONS = [
@@ -91,6 +93,7 @@ export default function ThemDoiTacPage() {
         address: form.address,
         introduction: form.introduction,
         logoType: form.logoType,
+        logoUrl: form.logoUrl,
         products: form.products,
       });
       if (res.success) {
@@ -237,14 +240,24 @@ export default function ThemDoiTacPage() {
             <div className="col-span-1">
               <div className="rounded-2xl bg-[#161b22] border border-white/[0.06] p-6 space-y-4">
                 <h2 className="text-sm font-bold text-white/70 border-b border-white/[0.06] pb-3">Logo thương hiệu</h2>
-                <div className="flex flex-col items-center justify-center py-6 border border-dashed border-white/10 rounded-xl bg-white/[0.01]">
-                  <Handshake className="size-12 text-white/25 mb-2" />
-                  <span className="text-[11px] text-white/40 font-bold uppercase tracking-wider">{form.category}</span>
+                <ImageUploadField
+                  label="Tải lên Logo đối tác"
+                  value={form.logoUrl || ''}
+                  onChange={up('logoUrl')}
+                  recommendedSize="400 × 400 px (PNG/SVG nền trong suốt)"
+                />
+                {/* Category badge preview */}
+                <div className="flex items-center gap-2 px-1">
+                  <div className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                    form.category === 'Kim cương' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' :
+                    form.category === 'Vàng' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                    form.category === 'Bạc' ? 'bg-slate-400/10 text-slate-300 border-slate-400/20' :
+                    'bg-white/5 text-white/40 border-white/10'
+                  }`}>{form.category}</div>
                 </div>
-                <div className="p-3 bg-white/[0.02] border border-white/[0.04] rounded-xl text-xs text-white/40 space-y-1">
-                  <p>• Logo thương hiệu sẽ tự động sinh chữ từ tên đối tác ở màn hình danh sách.</p>
-                  <p>• Tải ảnh sản phẩm riêng trong tab Sản Phẩm.</p>
-                </div>
+                <p className="text-[10px] text-white/30 leading-relaxed">
+                  Dùng file PNG hoặc SVG có nền trong suốt để logo hiển thị đẹp nhất trên website.
+                </p>
               </div>
             </div>
           </div>

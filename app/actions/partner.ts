@@ -52,6 +52,7 @@ export async function savePartner(data: {
   address: string;
   introduction: string;
   logoType?: string;
+  logoUrl?: string;
   products: ProductInput[];
 }) {
   if (!process.env.DATABASE_URL) {
@@ -69,6 +70,7 @@ export async function savePartner(data: {
       address: data.address,
       introduction: data.introduction,
       logoType: data.logoType || null,
+      logoUrl: data.logoUrl || null,
     };
 
     if (data.id && data.id.trim() !== '' && !PARTNERS_DATA.some(p => p.id === data.id)) {
