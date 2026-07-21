@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 // Configure Supabase client if credentials are provided in env
 const isSupabaseConfigured = !!(
   process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)
 );
 
 // Configure Cloudinary only if credentials are provided in env
@@ -39,8 +39,13 @@ export async function POST(request: Request) {
     // 1. If Supabase is configured, upload to Supabase Storage
     if (isSupabaseConfigured) {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+      // Support both key names
+      const supabaseKey = (
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+      )!;
       const supabase = createClient(supabaseUrl, supabaseKey);
+      console.log('☁️ Upload API: Using Supabase Storage');
 
       // Generate a unique safe filename
       const timestamp = Date.now();
