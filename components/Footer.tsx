@@ -78,6 +78,26 @@ export default function Footer() {
                 info@hsaps.org.vn
               </p>
             </div>
+          {/* Newsletter Subscription */}
+          <div className="flex flex-col gap-3">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-text-main dark:text-white">Đăng ký nhận tin tức</h4>
+            <p className="text-xs text-text-secondary dark:text-gray-400">
+              Nhận thông báo hội nghị khoa học, lớp CME và tin tức y khoa mới nhất qua Email / Zalo.
+            </p>
+            <form onSubmit={(e) => { e.preventDefault(); alert('Cảm ơn bạn đã đăng ký nhận tin tức từ HSAPS!'); }} className="flex flex-col gap-2 mt-1">
+              <input
+                type="email"
+                required
+                placeholder="Nhập email bác sĩ..."
+                className="w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3.5 py-2 text-xs text-text-main dark:text-white placeholder-gray-400 focus:border-primary focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-primary-dark transition-colors"
+              >
+                Đăng ký ngay
+              </button>
+            </form>
           </div>
         </div>
 

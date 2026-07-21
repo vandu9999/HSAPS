@@ -18,6 +18,7 @@ import {
   Tags,
   Sun,
   Moon,
+  BadgeCheck,
 } from 'lucide-react';
 import { getDoctorByEmail } from '@/app/actions/doctor';
 
@@ -87,6 +88,12 @@ export default function AdminSidebar({
         href: '/admin/hoi-vien',
         icon: Users,
         description: 'Danh sách bác sĩ',
+      },
+      {
+        label: 'Duyệt Hội viên',
+        href: '/admin/duyet-hoi-vien',
+        icon: BadgeCheck,
+        description: 'Duyệt hồ sơ & Thẻ điện tử',
       }
     ] : []),
     ...(userRole === 'EDITOR' && myDoctorId ? [
