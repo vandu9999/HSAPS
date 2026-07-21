@@ -1,886 +1,653 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import Image from 'next/image';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, useInView } from 'motion/react';
 import {
-  Stethoscope,
-  Menu,
-  ChevronRight,
-  Search,
-  Filter,
-  BadgeCheck,
-  MapPin,
-  Phone,
-  Mail,
-  GraduationCap,
-  Calendar,
-  Building,
-  Award,
-  IdCard,
-  UserPlus,
-  X,
-  Clock,
-  ArrowRight,
-  CheckCircle2,
-  FileText
+  GraduationCap, Shield, Users, Vote,
+  CalendarCheck, BookOpen, Scale, MessageSquare,
+  BadgeCheck, Network, FileText, Newspaper,
+  ArrowRight, ChevronRight, Star, Check,
+  UserPlus, ExternalLink, Award, Sparkles,
+  TrendingUp, Globe, Heart, Zap,
 } from 'lucide-react';
 
-import { Doctor, DOCTORS_DATA } from '@/lib/data';
+// ─── Types ────────────────────────────────────────────────────────────────────
+type Benefit = {
+  id: string;
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  tag?: string;
+};
 
+type BenefitGroup = {
+  id: string;
+  number: string;
+  category: string;
+  headline: string;
+  color: string;
+  bgLight: string;
+  bgDark: string;
+  accent: string;
+  icon: React.ComponentType<{ className?: string }>;
+  benefits: Benefit[];
+};
 
-// Specialization Groups for filter
-const SPECIALTY_GROUPS = [
-  { value: 'all', label: 'Tất cả chuyên khoa' },
-  { value: 'facial', label: 'Thẩm mỹ Vùng Mặt (Mắt, Mũi, Cằm, Hàm)' },
-  { value: 'body', label: 'Thẩm mỹ Vóc Dáng (Ngực, Hút mỡ, Bụng, Mông)' },
-  { value: 'skin', label: 'Trẻ hóa da & Thẩm mỹ Nội khoa' }
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const BENEFIT_GROUPS: BenefitGroup[] = [
+  {
+    id: 'nang-cao',
+    number: '01',
+    category: 'Nâng cao trình độ & Chuyên môn',
+    headline: 'Học không ngừng, dẫn đầu chuyên ngành',
+    color: 'from-violet-500 to-purple-700',
+    bgLight: 'bg-violet-50',
+    bgDark: 'dark:bg-violet-900/10',
+    accent: 'text-violet-600 dark:text-violet-400',
+    icon: GraduationCap,
+    benefits: [
+      {
+        id: 'b1',
+        icon: CalendarCheck,
+        title: 'Tham gia hội nghị & hội thảo',
+        description:
+          'Đăng ký dự các hội nghị khoa học quốc tế thường niên, hội thảo chuyên đề và lớp tập huấn y khoa do Hội tổ chức hoặc hợp tác với các tổ chức thẩm mỹ quốc tế với chi phí ưu đãi hoặc miễn phí.',
+        tag: 'Ưu đãi phí',
+      },
+      {
+        id: 'b2',
+        icon: BookOpen,
+        title: 'Đào tạo liên tục (CME)',
+        description:
+          'Tiếp cận thông tin y khoa, báo cáo nghiên cứu mới nhất và tham gia các khóa đào tạo nâng cao tay nghề, cấp chứng nhận CME để duy trì điều kiện hành nghề theo quy định.',
+        tag: 'Chứng nhận CME',
+      },
+    ],
+  },
+  {
+    id: 'phap-ly',
+    number: '02',
+    category: 'Hỗ trợ Pháp lý & Bảo vệ hành nghề',
+    headline: 'Hành nghề vững chắc, được pháp luật bảo hộ',
+    color: 'from-sky-500 to-blue-700',
+    bgLight: 'bg-sky-50',
+    bgDark: 'dark:bg-sky-900/10',
+    accent: 'text-sky-600 dark:text-sky-400',
+    icon: Shield,
+    benefits: [
+      {
+        id: 'b3',
+        icon: Scale,
+        title: 'Bảo vệ quyền lợi hợp pháp',
+        description:
+          'Được Hội bảo vệ quyền và lợi ích hợp pháp trong hoạt động khám chữa bệnh, hành nghề đúng quy định pháp luật; hỗ trợ xử lý các tranh chấp và tình huống pháp lý phát sinh.',
+        tag: 'Bảo vệ hành nghề',
+      },
+      {
+        id: 'b4',
+        icon: MessageSquare,
+        title: 'Tư vấn chuyên môn & Y khoa',
+        description:
+          'Nhận sự tư vấn, hỗ trợ chuyên môn từ Ban chấp hành và các chuyên gia đầu ngành khi gặp các ca bệnh khó hoặc sự cố y khoa trong phạm vi cho phép của pháp luật.',
+        tag: 'Chuyên gia hỗ trợ',
+      },
+    ],
+  },
+  {
+    id: 'uy-tin',
+    number: '03',
+    category: 'Uy tín & Kết nối cộng đồng',
+    headline: 'Khẳng định vị thế, mở rộng mạng lưới',
+    color: 'from-rose-500 to-pink-700',
+    bgLight: 'bg-rose-50',
+    bgDark: 'dark:bg-rose-900/10',
+    accent: 'text-rose-600 dark:text-rose-400',
+    icon: Users,
+    benefits: [
+      {
+        id: 'b5',
+        icon: BadgeCheck,
+        title: 'Khẳng định thương hiệu cá nhân & đơn vị',
+        description:
+          'Được công nhận là thành viên chính thức của một tổ chức nghề nghiệp chính thống, nâng cao uy tín chuyên môn đối với khách hàng, bệnh nhân và cộng đồng y tế.',
+        tag: 'Hội viên chính thức',
+      },
+      {
+        id: 'b6',
+        icon: Network,
+        title: 'Giao lưu & Mở rộng mạng lưới',
+        description:
+          'Kết nối, trao đổi kinh nghiệm chuyên môn với đội ngũ y bác sĩ, chuyên gia phẫu thuật tạo hình thẩm mỹ uy tín trong và ngoài nước thông qua các sự kiện và diễn đàn của Hội.',
+        tag: 'Mạng lưới quốc tế',
+      },
+    ],
+  },
+  {
+    id: 'quyen-to-chuc',
+    number: '04',
+    category: 'Quyền tổ chức & Đóng góp ý kiến',
+    headline: 'Tham gia xây dựng, định hướng phát triển ngành',
+    color: 'from-emerald-500 to-teal-700',
+    bgLight: 'bg-emerald-50',
+    bgDark: 'dark:bg-emerald-900/10',
+    accent: 'text-emerald-600 dark:text-emerald-400',
+    icon: Vote,
+    benefits: [
+      {
+        id: 'b7',
+        icon: Vote,
+        title: 'Thảo luận & Đóng góp',
+        description:
+          'Tham gia thảo luận, đóng góp ý kiến xây dựng định hướng phát triển ngành thẩm mỹ an toàn, góp ý văn bản quy phạm pháp luật liên quan đến chuyên ngành y học thẩm mỹ.',
+        tag: 'Góp ý chính sách',
+      },
+      {
+        id: 'b8',
+        icon: Award,
+        title: 'Quyền ứng cử, bầu cử',
+        description:
+          'Bầu cử, ứng cử vào Ban Chấp hành Liên chi hội theo quy định điều lệ; tham gia vào quá trình ra quyết định và quản trị tổ chức chuyên môn cao nhất ngành.',
+        tag: 'Dân chủ nội bộ',
+      },
+      {
+        id: 'b9',
+        icon: Newspaper,
+        title: 'Cung cấp thông tin',
+        description:
+          'Được Hội cung cấp các bản tin, tạp chí khoa học và thông tin hoạt động thường kỳ; tiếp cận nghiên cứu lâm sàng, hướng dẫn điều trị và cập nhật kỹ thuật mới nhất.',
+        tag: 'Thông tin thường kỳ',
+      },
+    ],
+  },
 ];
 
-// Title Groups for filter
-const TITLE_GROUPS = [
-  { value: 'all', label: 'Tất cả học vị' },
-  { value: 'PGS.TS.BS', label: 'PGS.TS.BS' },
-  { value: 'TS.BS', label: 'TS.BS' },
-  { value: 'BSCKII', label: 'BSCKII / BSCKI' },
-  { value: 'ThS.BS', label: 'Thạc sĩ Bác sĩ (ThS.BS)' }
+const STATS = [
+  { value: '500+', label: 'Hội viên chính thức', icon: Users },
+  { value: '15+', label: 'Năm hoạt động', icon: TrendingUp },
+  { value: '50+', label: 'Hội nghị đã tổ chức', icon: CalendarCheck },
+  { value: '1.000+', label: 'Bài báo khoa học', icon: BookOpen },
 ];
 
-export default function MembersPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState('all');
-  const [selectedTitle, setSelectedTitle] = useState('all');
-  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
-  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+const STEPS = [
+  { number: '01', title: 'Chuẩn bị hồ sơ', desc: 'Bằng tốt nghiệp y khoa, chứng chỉ hành nghề, ảnh thẻ và các giấy tờ liên quan.' },
+  { number: '02', title: 'Nộp đơn đăng ký', desc: 'Điền form online hoặc nộp trực tiếp tại văn phòng Hội kèm hồ sơ đầy đủ.' },
+  { number: '03', title: 'Xét duyệt', desc: 'Ban chấp hành xem xét, thẩm định hồ sơ trong vòng 7–10 ngày làm việc.' },
+  { number: '04', title: 'Cấp thẻ Hội viên', desc: 'Nhận thẻ hội viên chính thức và tận hưởng đầy đủ quyền lợi ngay lập tức.' },
+];
 
-  // Form State for becoming a member
-  const [regForm, setRegForm] = useState({
-    name: '',
-    title: 'BS',
-    cchn: '',
-    phone: '',
-    email: '',
-    hospital: '',
-    specialty: '',
-    message: ''
-  });
-  const [isRegSubmitted, setIsRegSubmitted] = useState(false);
-  const [submittedId, setSubmittedId] = useState('');
-  const [submittedTime, setSubmittedTime] = useState('');
+// ─── Sub-components ───────────────────────────────────────────────────────────
+function AnimatedCounter({ value }: { value: string }) {
+  return <span>{value}</span>;
+}
 
-  const handleRegSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmittedId(`HSAPS-${Math.floor(100000 + Math.random() * 900000)}`);
-    setSubmittedTime(`${new Date().toLocaleDateString('vi-VN')} ${new Date().toLocaleTimeString('vi-VN')}`);
-    setIsRegSubmitted(true);
-    setTimeout(() => {
-      // Reset form after a while
-      setRegForm({
-        name: '',
-        title: 'BS',
-        cchn: '',
-        phone: '',
-        email: '',
-        hospital: '',
-        specialty: '',
-        message: ''
-      });
-    }, 4000);
-  };
+function BenefitCard({ benefit, accent, delay }: { benefit: Benefit; accent: string; delay: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const Icon = benefit.icon;
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.45, delay, ease: 'easeOut' }}
+      className="group flex flex-col gap-4 rounded-2xl border border-gray-100 dark:border-white/[0.07] bg-white dark:bg-[#161b22] p-5 sm:p-6 hover:shadow-lg dark:hover:shadow-black/30 transition-all duration-300 hover:-translate-y-0.5"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className={`flex size-10 sm:size-12 shrink-0 items-center justify-center rounded-xl ${accent.includes('violet') ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-600' : accent.includes('sky') ? 'bg-sky-50 dark:bg-sky-900/20 text-sky-600' : accent.includes('rose') ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600'}`}>
+          <Icon className="size-5 sm:size-6" />
+        </div>
+        {benefit.tag && (
+          <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${accent.includes('violet') ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400' : accent.includes('sky') ? 'bg-sky-50 dark:bg-sky-900/20 text-sky-600 dark:text-sky-400' : accent.includes('rose') ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'}`}>
+            {benefit.tag}
+          </span>
+        )}
+      </div>
+      <div>
+        <h4 className="font-bold text-base sm:text-lg text-text-main dark:text-white mb-2 group-hover:text-primary dark:group-hover:text-[#ec297b] transition-colors">
+          {benefit.title}
+        </h4>
+        <p className="text-sm leading-relaxed text-text-secondary dark:text-gray-400">
+          {benefit.description}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
 
-  // Helper function to match specialty groups
-  const matchesSpecialtyGroup = (doctorSpecs: string[], groupValue: string): boolean => {
-    if (groupValue === 'all') return true;
-
-    const lowerSpecs = doctorSpecs.map(s => s.toLowerCase());
-
-    if (groupValue === 'facial') {
-      return lowerSpecs.some(s =>
-        s.includes('mặt') || s.includes('mắt') || s.includes('mũi') || s.includes('cằm') || s.includes('hàm')
-      );
-    }
-    if (groupValue === 'body') {
-      return lowerSpecs.some(s =>
-        s.includes('ngực') || s.includes('mông') || s.includes('mỡ') || s.includes('bụng') || s.includes('body')
-      );
-    }
-    if (groupValue === 'skin') {
-      return lowerSpecs.some(s =>
-        s.includes('da') || s.includes('trẻ hóa') || s.includes('filler') || s.includes('botox') || s.includes('laser') || s.includes('nội khoa')
-      );
-    }
-    return false;
-  };
-
-  // Filtered Doctors List
-  const filteredDoctors = useMemo(() => {
-    return DOCTORS_DATA.filter((doc) => {
-      // 1. Search Query Match
-      const searchStr = `${doc.name} ${doc.title} ${doc.clinic} ${doc.specialty.join(' ')}`.toLowerCase();
-      const matchesSearch = searchStr.includes(searchQuery.toLowerCase());
-
-      // 2. Specialty Match
-      const matchesSpec = matchesSpecialtyGroup(doc.specialty, selectedSpecialty);
-
-      // 3. Title Match
-      let matchesTitle = true;
-      if (selectedTitle !== 'all') {
-        if (selectedTitle === 'BSCKII') {
-          matchesTitle = doc.title === 'BSCKII' || doc.title === 'BSCKI';
-        } else {
-          matchesTitle = doc.title === selectedTitle;
-        }
-      }
-
-      return matchesSearch && matchesSpec && matchesTitle;
-    });
-  }, [searchQuery, selectedSpecialty, selectedTitle]);
-
-  // Statistics
-  const statistics = useMemo(() => {
-    const total = DOCTORS_DATA.length;
-    const pgs = DOCTORS_DATA.filter(d => d.title.includes('PGS')).length;
-    const ts = DOCTORS_DATA.filter(d => d.title === 'TS.BS').length;
-    const specs = new Set(DOCTORS_DATA.flatMap(d => d.specialty)).size;
-    return { total, pgs, ts, specs };
-  }, []);
+// ─── Main Page ────────────────────────────────────────────────────────────────
+export default function HoiVienPage() {
+  const [activeGroup, setActiveGroup] = useState<string>('nang-cao');
 
   return (
-    <div className="bg-background-light font-sans text-text-main antialiased dark:bg-background-dark dark:text-white min-h-screen flex flex-col justify-between">
-      {/* Hero Section */}
-      <section className="relative bg-gray-900 overflow-hidden py-16 md:py-24 text-white">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-15"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/85 to-purple-950/90 mix-blend-multiply"></div>
-        <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <span className="inline-block py-1 px-3 rounded-full bg-accent/20 text-accent border border-accent/30 text-xs font-bold uppercase tracking-widest w-fit mb-4 backdrop-blur-sm">
-              Cổng thông tin HSAPS
-            </span>
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
-              Danh sách <span className="text-accent">Hội viên Chính thức</span>
-            </h1>
-            <p className="text-base md:text-lg text-gray-200 font-medium leading-relaxed mb-6 opacity-95">
-              Danh bạ tra cứu chính thức các Giáo sư, Tiến sĩ, Bác sĩ chuyên khoa Phẫu thuật Tạo hình và Thẩm mỹ được cấp phép hành nghề hợp pháp, là thành viên chính thức thuộc Hội Phẫu thuật Thẩm mỹ TP.HCM (HSAPS).
-            </p>
-            <div className="flex flex-wrap gap-4 items-center text-xs text-pink-100">
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                <BadgeCheck className="size-4 text-accent" />
-                Tiêu chuẩn y khoa hàng đầu
-              </span>
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                <IdCard className="size-4 text-accent" />
-                Chứng chỉ hành nghề BYT hợp lệ
-              </span>
-            </div>
-          </div>
+    <div className="min-h-screen bg-background-light dark:bg-background-dark overflow-x-hidden">
+
+      {/* ① HERO ─────────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#1a0c16] via-[#2d0f2a] to-[#1a0c16] py-20 sm:py-28 lg:py-36">
+        {/* Decorative blobs */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-[#ec297b]/10 blur-[120px]" />
+          <div className="absolute -bottom-40 -right-40 h-[600px] w-[600px] rounded-full bg-purple-700/10 blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-rose-900/10 blur-[80px]" />
         </div>
-      </section>
 
-      {/* Breadcrumbs with Realtime Statistics */}
-      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
-        <div className="mx-auto max-w-[1200px] px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          
-          {/* Breadcrumbs */}
-          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-            <Link className="transition-colors hover:text-primary" href="/">
-              Trang chủ
-            </Link>
-            <ChevronRight className="size-4" />
-            <span className="font-semibold text-primary">Hội viên</span>
-          </div>
+        {/* Grid pattern overlay */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.03]"
+          style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+        />
 
-          {/* Core Stat Counters */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full md:w-auto">
-            <div className="bg-pink-50/50 dark:bg-pink-950/20 px-4 py-2 rounded-xl text-center md:text-left border border-pink-100/30">
-              <p className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400">Tổng Hội viên</p>
-              <p className="text-xl font-bold text-primary">{statistics.total * 64}+ <span className="text-xs font-normal text-gray-500">BS</span></p>
-            </div>
-            <div className="bg-amber-50/50 dark:bg-amber-950/20 px-4 py-2 rounded-xl text-center md:text-left border border-amber-100/30">
-              <p className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400">Phó Giáo Sư</p>
-              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{statistics.pgs * 12}+ <span className="text-xs font-normal text-gray-500">Thầy thuốc</span></p>
-            </div>
-            <div className="bg-purple-50/50 dark:bg-purple-950/20 px-4 py-2 rounded-xl text-center md:text-left border border-purple-100/30">
-              <p className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400">Tiến sĩ Y Khoa</p>
-              <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{statistics.ts * 24}+ <span className="text-xs font-normal text-gray-500">Tiến sĩ</span></p>
-            </div>
-            <div className="bg-teal-50/50 dark:bg-teal-950/20 px-4 py-2 rounded-xl text-center md:text-left border border-teal-100/30">
-              <p className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400">Bệnh viện & PK</p>
-              <p className="text-xl font-bold text-teal-600 dark:text-teal-400">120+ <span className="text-xs font-normal text-gray-500">Cơ sở</span></p>
-            </div>
-          </div>
+        <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 text-center">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 rounded-full border border-[#ec297b]/30 bg-[#ec297b]/10 px-4 py-1.5 text-xs sm:text-sm font-bold text-[#ec297b] mb-6 sm:mb-8"
+          >
+            <Sparkles className="size-3.5" />
+            Hội Phẫu thuật Thẩm mỹ TP. Hồ Chí Minh
+          </motion.div>
 
-        </div>
-      </section>
-
-      {/* Main Content Area */}
-      <main className="mx-auto max-w-[1200px] w-full px-4 sm:px-6 lg:px-8 py-12 flex-grow">
-        
-        {/* Interactive Search & Multi-Filters Panel */}
-        <section className="mb-10 bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-pink-50 dark:border-pink-900/10">
-          <div className="flex flex-col gap-6">
-            
-            {/* Row 1: Heading and Search Bar */}
-            <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Filter className="size-5 text-primary" />
-                  Bộ lọc tra cứu chuyên nghiệp
-                </h2>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Tìm kiếm theo tên bác sĩ, bệnh viện làm việc, hoặc số giấy phép hành nghề</p>
-              </div>
-              
-              {/* Search input */}
-              <div className="relative w-full lg:max-w-md">
-                <input
-                  type="text"
-                  placeholder="Nhập tên bác sĩ, cơ sở công tác, chuyên khoa..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-12 pl-11 pr-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-gray-400 dark:text-gray-500 pointer-events-none" />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs font-medium"
-                  >
-                    Xóa
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-gray-100 dark:bg-gray-800"></div>
-
-            {/* Row 2: Selectable Filter Buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Filter Specialty */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">Chuyên khoa sâu</label>
-                <div className="flex flex-wrap gap-2">
-                  {SPECIALTY_GROUPS.map((spec) => (
-                    <button
-                      key={spec.value}
-                      onClick={() => setSelectedSpecialty(spec.value)}
-                      className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
-                        selectedSpecialty === spec.value
-                          ? 'bg-primary text-white shadow-sm'
-                          : 'bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
-                      }`}
-                    >
-                      {spec.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Filter Title/Education */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">Học vị / Học hàm</label>
-                <div className="flex flex-wrap gap-2">
-                  {TITLE_GROUPS.map((title) => (
-                    <button
-                      key={title.value}
-                      onClick={() => setSelectedTitle(title.value)}
-                      className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
-                        selectedTitle === title.value
-                          ? 'bg-primary text-white shadow-sm'
-                          : 'bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
-                      }`}
-                    >
-                      {title.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-            </div>
-
-            {/* Quick Helper Count */}
-            <div className="flex justify-between items-center bg-pink-50/20 dark:bg-pink-950/10 px-4 py-2.5 rounded-lg text-xs text-gray-500 dark:text-gray-400 border border-pink-100/10">
-              <div>
-                Đang hiển thị <span className="font-bold text-primary">{filteredDoctors.length}</span> trên <span className="font-bold">{DOCTORS_DATA.length}</span> bác sĩ nổi bật của ban chấp hành và hội viên.
-              </div>
-              {(searchQuery || selectedSpecialty !== 'all' || selectedTitle !== 'all') && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedSpecialty('all');
-                    setSelectedTitle('all');
-                  }}
-                  className="font-bold text-primary hover:underline flex items-center gap-1"
-                >
-                  Đặt lại bộ lọc
-                </button>
-              )}
-            </div>
-
-          </div>
-        </section>
-
-        {/* Doctor Grid Directory */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <AnimatePresence mode="popLayout">
-            {filteredDoctors.map((doc, idx) => (
-              <motion.div
-                layout
-                key={doc.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3, delay: Math.min(idx * 0.05, 0.4) }}
-                className="group relative flex flex-col justify-between bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/60 hover:shadow-xl hover:border-pink-100/50 dark:hover:border-pink-900/20 transition-all duration-300 overflow-hidden"
-              >
-                {/* Top accent bar */}
-                <div className={`h-1 w-full ${doc.isOfficial ? 'bg-gradient-to-r from-primary to-pink-400' : 'bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600'}`} />
-
-                {/* Card Content */}
-                <div className="p-6">
-
-                  {/* Doctor Profile Header */}
-                  <div className="flex gap-4 mb-5 items-start">
-                    <div className="relative size-20 shrink-0 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-md bg-gray-50">
-                      <Image
-                        src={doc.avatar}
-                        alt={`Bác sĩ ${doc.name}`}
-                        fill
-                        sizes="80px"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        referrerPolicy="no-referrer"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0 pt-0.5">
-                      {/* Role badge */}
-                      {doc.role && (
-                        <span className="inline-block px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-extrabold uppercase tracking-wider mb-1.5">
-                          {doc.role}
-                        </span>
-                      )}
-                      {/* Học hàm / Học vị — dòng 1 */}
-                      <p className="text-[11px] font-bold text-primary/80 dark:text-primary/70 uppercase tracking-widest leading-none mb-1">
-                        {doc.title}
-                      </p>
-                      {/* Họ và tên — dòng 2 */}
-                      <h3 className="text-base font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors leading-snug line-clamp-1">
-                        {doc.name}
-                      </h3>
-                      {/* CCHN */}
-                      <p className="text-[10px] text-gray-400 dark:text-gray-500 flex items-center gap-1 mt-1.5 font-mono">
-                        <IdCard className="size-3 text-gray-400 shrink-0" />
-                        CCHN: {doc.cchn}
-                      </p>
-                      {/* Membership badge — dưới tên, không đè */}
-                      {doc.isOfficial ? (
-                        <div className="mt-2 inline-flex items-center gap-1 bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded-full text-[9px] font-bold border border-teal-100/60 dark:border-teal-900/40 uppercase tracking-wide">
-                          <BadgeCheck className="size-3 fill-teal-600 text-white dark:fill-teal-400 shrink-0" />
-                          Hội viên chính thức
-                        </div>
-                      ) : (
-                        <div className="mt-2 inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 px-2 py-0.5 rounded-full text-[9px] font-bold border border-gray-200/60 dark:border-gray-700 uppercase tracking-wide">
-                          Hội viên liên kết
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Clinic and Work Location */}
-                  <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300 border-t border-gray-50 dark:border-gray-800/60 pt-4 mb-5">
-                    <div className="flex items-start gap-2">
-                      <Building className="size-4 text-primary shrink-0 mt-0.5" />
-                      <span className="font-semibold text-gray-800 dark:text-gray-200 text-xs line-clamp-1">
-                        {doc.clinic}
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-2 text-xs">
-                      <MapPin className="size-4 text-gray-400 shrink-0" />
-                      <span className="text-gray-500 dark:text-gray-400 line-clamp-1">
-                        {doc.address}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Specialties Tag Cloud */}
-                  <div className="space-y-1.5 mb-5">
-                    <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Chuyên khoa thế mạnh</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {doc.specialty.map((spec, i) => (
-                        <span
-                          key={i}
-                          className="bg-gray-50 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 px-2 py-1 rounded text-[11px] font-medium"
-                        >
-                          {spec}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Footer of Card */}
-                <div className="border-t border-gray-100 dark:border-gray-800/60 px-6 py-3 flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-[11px] text-gray-400">
-                    <Clock className="size-3" />
-                    Gia nhập: {doc.joinedYear}
-                  </div>
-                  <Link
-                    href={`/hoi-vien/${doc.id}`}
-                    className="flex items-center gap-1 text-xs font-bold text-primary hover:text-pink-700 transition-all cursor-pointer group/btn"
-                  >
-                    Xem chi tiết
-                    <ArrowRight className="size-3.5 transform group-hover/btn:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          {/* Empty State */}
-          {filteredDoctors.length === 0 && (
-            <div className="col-span-full py-16 text-center bg-gray-50 dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
-              <div className="mx-auto size-16 rounded-full bg-pink-50 dark:bg-pink-950/20 flex items-center justify-center text-primary mb-4">
-                <Search className="size-8" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Không tìm thấy bác sĩ phù hợp</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto px-4">
-                Thử nhập từ khóa khác, hoặc làm sạch bộ lọc để xem lại danh sách tất cả các hội viên chính thức của Hội.
-              </p>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedSpecialty('all');
-                  setSelectedTitle('all');
-                }}
-                className="mt-4 px-5 py-2.5 bg-primary text-white rounded-lg text-xs font-bold shadow-md hover:bg-pink-700 transition-colors"
-              >
-                Đặt lại bộ lọc
-              </button>
-            </div>
-          )}
-        </section>
-
-        {/* CTA Banner: Join HSAPS */}
-        <section className="mt-20 relative bg-gradient-to-r from-primary to-pink-600 rounded-3xl p-8 md:p-12 text-white overflow-hidden shadow-xl shadow-primary/10">
-          <div className="absolute right-0 bottom-0 top-0 w-1/3 opacity-10 pointer-events-none bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-yellow-300 via-pink-500 to-purple-800"></div>
-          <div className="relative z-10 max-w-3xl">
-            <span className="inline-block py-1 px-3 rounded-full bg-white/20 text-white text-[10px] font-bold uppercase tracking-widest w-fit mb-4 backdrop-blur-sm">
-              Đồng hành cùng ngành PTTM Việt Nam
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.08 }}
+            className="mb-5 sm:mb-6 fluid-h1 font-display font-extrabold text-white"
+          >
+            Trở thành{' '}
+            <span className="relative inline-block">
+              <span className="bg-gradient-to-r from-[#ec297b] via-rose-400 to-[#fcd34d] bg-clip-text text-transparent">
+                Hội viên HSAPS
+              </span>
+              <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#ec297b] to-[#fcd34d] rounded-full opacity-50" />
             </span>
-            <h2 className="text-2xl md:text-4xl font-extrabold mb-4 tracking-tight leading-tight">
-              Đăng ký Gia nhập HSAPS <br/>Khẳng định Uy tín Chuyên môn
-            </h2>
-            <p className="text-sm md:text-base text-pink-50 mb-8 leading-relaxed max-w-2xl">
-              HSAPS mở rộng chào đón các Bác sĩ chuyên ngành Phẫu thuật Tạo hình, Thẩm mỹ, Da liễu Thẩm mỹ đăng ký hội viên chính thức hoặc hội viên liên kết để cùng nhau nâng tầm tay nghề, cập nhật y khoa quốc tế định kỳ.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => setIsRegistrationModalOpen(true)}
-                className="bg-white text-primary hover:bg-pink-50 text-sm font-bold h-12 px-8 rounded-full shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
-              >
-                Gửi Hồ sơ Đăng ký
-              </button>
-              <Link
-                href="/gioi-thieu"
-                className="border border-white/40 hover:border-white text-white hover:bg-white/10 text-sm font-bold h-12 px-8 rounded-full transition-all flex items-center justify-center"
-              >
-                Tìm hiểu Điều lệ Hội
-              </Link>
-            </div>
-          </div>
-        </section>
+          </motion.h1>
 
-      </main>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.14 }}
+            className="mx-auto mb-8 sm:mb-10 max-w-2xl fluid-body text-gray-300"
+          >
+            Tham gia cộng đồng chuyên gia phẫu thuật thẩm mỹ hàng đầu Việt Nam. Nhận đầy đủ quyền lợi học thuật, pháp lý, kết nối và đóng góp vào định hướng phát triển ngành.
+          </motion.p>
 
-
-
-      {/* --- POPUP 1: DOCTOR DETAILED INFO MODAL --- */}
-      <AnimatePresence>
-        {selectedDoctor && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedDoctor(null)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-            ></motion.div>
-
-            {/* Modal Box */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-white dark:bg-gray-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col"
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+          >
+            <Link
+              href="/login?tab=register"
+              className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ec297b] to-rose-600 px-7 sm:px-8 py-3.5 text-sm sm:text-base font-bold text-white shadow-lg shadow-pink-900/30 hover:shadow-xl hover:shadow-pink-900/40 hover:scale-[1.03] active:scale-[0.98] transition-all"
             >
-              
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedDoctor(null)}
-                className="absolute right-4 top-4 z-20 p-2 text-gray-400 hover:text-gray-700 dark:hover:text-white rounded-full bg-gray-50 dark:bg-gray-800 transition-colors"
-              >
-                <X className="size-5" />
-              </button>
+              <UserPlus className="size-4 sm:size-5" />
+              Đăng ký Hội viên ngay
+            </Link>
+            <a
+              href="#quyen-loi"
+              className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[0.07] px-7 sm:px-8 py-3.5 text-sm sm:text-base font-bold text-white backdrop-blur hover:bg-white/[0.14] transition-all"
+            >
+              Xem quyền lợi <ChevronRight className="size-4" />
+            </a>
+          </motion.div>
+        </div>
 
-              {/* Main Body (Scrollable) */}
-              <div className="overflow-y-auto flex-grow p-6 md:p-8">
-                
-                {/* Profile Header */}
-                <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left border-b border-gray-100 dark:border-gray-800 pb-6">
-                  <div className="relative size-28 shrink-0 rounded-2xl overflow-hidden border-2 border-primary/20 bg-gray-50 shadow-md">
-                    <Image
-                      src={selectedDoctor.avatar}
-                      alt={selectedDoctor.name}
-                      fill
-                      sizes="112px"
-                      className="object-cover"
-                      referrerPolicy="no-referrer"
-                    />
+        {/* Stats bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="relative z-10 mt-14 sm:mt-20 mx-auto max-w-4xl px-4 sm:px-6"
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 sm:p-6 backdrop-blur-sm">
+            {STATS.map((s) => {
+              const Icon = s.icon;
+              return (
+                <div key={s.label} className="flex flex-col items-center text-center gap-1.5">
+                  <div className="flex size-9 items-center justify-center rounded-lg bg-[#ec297b]/10 text-[#ec297b] mb-1">
+                    <Icon className="size-4" />
                   </div>
-                  <div className="space-y-2">
-                    {selectedDoctor.role && (
-                      <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
-                        {selectedDoctor.role}
-                      </span>
-                    )}
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {selectedDoctor.title}. {selectedDoctor.name}
-                    </h3>
-                    <div className="flex flex-wrap justify-center sm:justify-start gap-3 text-xs text-gray-500 dark:text-gray-400">
-                      <span className="flex items-center gap-1">
-                        <IdCard className="size-3.5 text-primary" />
-                        CCHN: {selectedDoctor.cchn}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="size-3.5 text-primary" />
-                        Hội viên từ {selectedDoctor.joinedYear}
-                      </span>
-                    </div>
-                  </div>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white">{s.value}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400 font-medium">{s.label}</p>
                 </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      </section>
 
-                {/* Information Sections */}
-                <div className="mt-6 space-y-6">
-                  
-                  {/* Bio */}
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1.5">
-                      <Award className="size-4" />
-                      Giới thiệu & Kinh nghiệm lâm sàng
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl">
-                      {selectedDoctor.experience}
+      {/* ② NAV TABS ─────────────────────────────────────────────────────── */}
+      <div id="quyen-loi" className="sticky top-16 z-30 border-b border-gray-100 dark:border-white/[0.06] bg-white/95 dark:bg-[#0d1117]/95 backdrop-blur-sm">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="flex overflow-x-auto gap-0 scrollbar-none">
+            {BENEFIT_GROUPS.map((g) => {
+              const Icon = g.icon;
+              const active = activeGroup === g.id;
+              return (
+                <button
+                  key={g.id}
+                  onClick={() => setActiveGroup(g.id)}
+                  className={`relative flex shrink-0 items-center gap-2 px-4 sm:px-5 py-3.5 sm:py-4 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${active ? 'text-primary' : 'text-text-secondary dark:text-gray-400 hover:text-text-main dark:hover:text-white'}`}
+                >
+                  <Icon className="size-3.5 sm:size-4" />
+                  <span className="hidden sm:inline">{g.category}</span>
+                  <span className="sm:hidden">{g.number}</span>
+                  {active && (
+                    <motion.div
+                      layoutId="tab-indicator"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ③ BENEFITS CONTENT ─────────────────────────────────────────────── */}
+      <section className="py-12 sm:py-16 lg:py-20">
+        {BENEFIT_GROUPS.map((group) => {
+          if (activeGroup !== group.id) return null;
+          const GroupIcon = group.icon;
+          return (
+            <div key={group.id} className="mx-auto max-w-6xl px-4 sm:px-6">
+              {/* Group header */}
+              <motion.div
+                key={group.id + '-header'}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="mb-10 sm:mb-12"
+              >
+                <div className="flex items-start gap-4 sm:gap-6">
+                  <div className={`flex size-14 sm:size-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${group.color} text-white shadow-lg`}>
+                    <GroupIcon className="size-7 sm:size-8" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                        Quyền lợi {group.number}
+                      </span>
+                      <div className="h-px flex-1 max-w-16 bg-gray-200 dark:bg-white/10" />
+                    </div>
+                    <h2 className="fluid-h2 font-display font-bold text-text-main dark:text-white mb-2">
+                      {group.category}
+                    </h2>
+                    <p className={`text-base sm:text-lg font-semibold ${group.accent}`}>
+                      {group.headline}
                     </p>
                   </div>
+                </div>
+              </motion.div>
 
-                  {/* Specialties */}
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1.5">
-                      <Stethoscope className="size-4" />
-                      Chuyên khoa sâu phụ trách
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedDoctor.specialty.map((spec, i) => (
-                        <span
-                          key={i}
-                          className="bg-pink-50/60 dark:bg-pink-950/20 text-primary border border-pink-100/20 px-3 py-1 rounded-full text-xs font-semibold"
-                        >
-                          {spec}
-                        </span>
-                      ))}
-                    </div>
+              {/* Benefit cards grid */}
+              <div className={`grid gap-5 ${group.benefits.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+                {group.benefits.map((benefit, i) => (
+                  <BenefitCard
+                    key={benefit.id}
+                    benefit={benefit}
+                    accent={group.accent}
+                    delay={i * 0.1}
+                  />
+                ))}
+              </div>
+
+              {/* Visual detail block */}
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.25 }}
+                className={`mt-8 rounded-2xl ${group.bgLight} ${group.bgDark} border border-gray-100 dark:border-white/[0.06] p-6 sm:p-8`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`hidden sm:flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${group.color} text-white`}>
+                    <Star className="size-5" />
                   </div>
-
-                  {/* Education details */}
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1.5">
-                      <GraduationCap className="size-4" />
-                      Học vấn & Quá trình đào tạo
-                    </h4>
-                    <ul className="space-y-2.5 text-sm text-gray-600 dark:text-gray-300">
-                      {selectedDoctor.education.map((edu, i) => (
-                        <li key={i} className="flex gap-2.5 items-start">
-                          <CheckCircle2 className="size-4.5 text-teal-500 shrink-0 mt-0.5" />
-                          <span>{edu}</span>
+                  <div>
+                    <h3 className={`text-sm font-bold uppercase tracking-wider ${group.accent} mb-2`}>
+                      Điểm nổi bật
+                    </h3>
+                    <ul className="space-y-2">
+                      {group.benefits.map((b) => (
+                        <li key={b.id} className="flex items-start gap-2 text-sm text-text-secondary dark:text-gray-400">
+                          <Check className={`size-4 shrink-0 mt-0.5 ${group.accent}`} />
+                          <span><strong className="text-text-main dark:text-white">{b.title}:</strong> {b.description.split('.')[0]}.</span>
                         </li>
                       ))}
                     </ul>
                   </div>
+                </div>
+              </motion.div>
+            </div>
+          );
+        })}
+      </section>
 
-                  {/* Work location contact */}
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1.5">
-                      <Building className="size-4" />
-                      Cơ sở công tác & Liên hệ công việc
-                    </h4>
-                    <div className="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl space-y-2.5 text-xs text-gray-600 dark:text-gray-300">
-                      <div className="flex gap-2 items-center">
-                        <Building className="size-4 text-primary shrink-0" />
-                        <span className="font-bold">{selectedDoctor.clinic}</span>
+      {/* ④ ALL BENEFITS OVERVIEW (all groups collapsed) ─────────────────── */}
+      <section className="border-t border-gray-100 dark:border-white/[0.06] bg-gray-50/60 dark:bg-[#0d1117]/60 py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="mb-10 sm:mb-12 text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary mb-4">
+              <Zap className="size-3" /> Toàn bộ quyền lợi
+            </span>
+            <h2 className="fluid-h2 font-display font-bold text-text-main dark:text-white mb-3">
+              4 nhóm quyền lợi, 9 đặc quyền
+            </h2>
+            <p className="fluid-body text-text-secondary dark:text-gray-400 max-w-2xl mx-auto">
+              Hội viên HSAPS được hưởng trọn vẹn hệ thống quyền lợi toàn diện, bao gồm học thuật, pháp lý, uy tín và đóng góp.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
+            {BENEFIT_GROUPS.map((group, gi) => {
+              const GroupIcon = group.icon;
+              return (
+                <motion.div
+                  key={group.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ duration: 0.4, delay: gi * 0.08 }}
+                  className="rounded-2xl border border-gray-100 dark:border-white/[0.07] bg-white dark:bg-[#161b22] overflow-hidden hover:shadow-md dark:hover:shadow-black/30 transition-all"
+                >
+                  {/* Card header */}
+                  <div className={`bg-gradient-to-r ${group.color} p-4 sm:p-5`}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-9 items-center justify-center rounded-lg bg-white/20 backdrop-blur">
+                        <GroupIcon className="size-5 text-white" />
                       </div>
-                      <div className="flex gap-2 items-center">
-                        <MapPin className="size-4 text-gray-400 shrink-0" />
-                        <span>{selectedDoctor.address}</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-gray-100 dark:border-gray-800/50 mt-2">
-                        <div className="flex gap-2 items-center font-mono">
-                          <Mail className="size-4 text-gray-400 shrink-0" />
-                          <span>{selectedDoctor.email}</span>
-                        </div>
-                        <div className="flex gap-2 items-center font-mono">
-                          <Phone className="size-4 text-gray-400 shrink-0" />
-                          <span>{selectedDoctor.phone}</span>
-                        </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">Quyền lợi {group.number}</p>
+                        <h3 className="text-sm sm:text-base font-bold text-white">{group.category}</h3>
                       </div>
                     </div>
                   </div>
 
-                </div>
+                  {/* Benefit list */}
+                  <div className="p-4 sm:p-5 space-y-3">
+                    {group.benefits.map((benefit) => {
+                      const BIcon = benefit.icon;
+                      return (
+                        <div key={benefit.id} className="flex items-start gap-3 rounded-xl p-3 hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-colors">
+                          <div className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${group.bgLight} ${group.bgDark}`}>
+                            <BIcon className={`size-4 ${group.accent}`} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-text-main dark:text-white">{benefit.title}</p>
+                            <p className="text-xs text-text-secondary dark:text-gray-500 mt-0.5 line-clamp-2">{benefit.description}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
 
-              </div>
-
-              {/* Bottom footer bar */}
-              <div className="bg-gray-50 dark:bg-gray-800/30 px-6 py-4 flex gap-3 justify-end border-t border-gray-100 dark:border-gray-800/60">
-                <button
-                  onClick={() => setSelectedDoctor(null)}
-                  className="px-5 py-2.5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-bold rounded-lg transition-colors cursor-pointer"
-                >
-                  Đóng lại
-                </button>
-                <a
-                  href={`mailto:${selectedDoctor.email}`}
-                  className="px-5 py-2.5 bg-primary hover:bg-pink-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1"
-                >
-                  <Mail className="size-3.5" />
-                  Gửi thư liên hệ
-                </a>
-              </div>
-
-            </motion.div>
+                  <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                    <button
+                      onClick={() => {
+                        setActiveGroup(group.id);
+                        document.getElementById('quyen-loi')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }}
+                      className={`flex items-center gap-1.5 text-xs font-bold ${group.accent} hover:underline transition-all`}
+                    >
+                      Xem chi tiết <ArrowRight className="size-3.5" />
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      </section>
 
-      {/* --- POPUP 2: MEMBERSHIP APPLICATION WORKFLOW MODAL --- */}
-      <AnimatePresence>
-        {isRegistrationModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => {
-                setIsRegistrationModalOpen(false);
-                setIsRegSubmitted(false);
-              }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-            ></motion.div>
+      {/* ⑤ ĐĂNG KÝ STEPS ─────────────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 bg-white dark:bg-background-dark border-t border-gray-100 dark:border-white/[0.06]">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="mb-12 sm:mb-16 text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary mb-4">
+              <UserPlus className="size-3" /> Quy trình đăng ký
+            </span>
+            <h2 className="fluid-h2 font-display font-bold text-text-main dark:text-white mb-3">
+              4 bước đơn giản để gia nhập HSAPS
+            </h2>
+            <p className="fluid-body text-text-secondary dark:text-gray-400 max-w-xl mx-auto">
+              Quy trình đăng ký minh bạch, nhanh gọn — thường hoàn tất trong 7–10 ngày làm việc.
+            </p>
+          </div>
 
-            {/* Modal Box */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden z-10 flex flex-col"
+          <div className="relative">
+            {/* Connector line (desktop) */}
+            <div className="absolute top-8 left-[calc(12.5%+1rem)] right-[calc(12.5%+1rem)] h-0.5 bg-gradient-to-r from-primary/20 via-primary/60 to-primary/20 hidden lg:block" />
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {STEPS.map((step, i) => (
+                <motion.div
+                  key={step.number}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                  className="relative flex flex-col items-center text-center gap-3"
+                >
+                  <div className="relative flex size-14 sm:size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ec297b] to-rose-600 text-white font-extrabold text-lg shadow-lg shadow-pink-500/20 z-10">
+                    {step.number}
+                    <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-[#ec297b] to-rose-600 opacity-20 blur-sm -z-10" />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-bold text-text-main dark:text-white">{step.title}</h3>
+                  <p className="text-xs sm:text-sm text-text-secondary dark:text-gray-400 leading-relaxed">{step.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ⑥ CTA BANNER ──────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#ec297b] via-rose-600 to-[#c2185f] py-16 sm:py-20">
+        {/* Decorative */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-yellow-300/20 blur-3xl" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 text-xs font-bold text-white">
+            <Heart className="size-3 fill-white" /> Cộng đồng chuyên nghiệp
+          </div>
+          <h2 className="mb-4 sm:mb-6 fluid-h2 font-display font-bold text-white">
+            Sẵn sàng gia nhập<br className="hidden sm:block" /> đội ngũ HSAPS?
+          </h2>
+          <p className="mb-8 sm:mb-10 fluid-body text-pink-100 max-w-xl mx-auto">
+            Đăng ký ngay hôm nay để tiếp cận toàn bộ 9 đặc quyền dành riêng cho Hội viên chính thức.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <Link
+              href="/login?tab=register"
+              className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm sm:text-base font-bold text-primary shadow-xl hover:scale-[1.03] active:scale-[0.97] transition-all"
             >
-              {/* Close Button */}
-              <button
-                onClick={() => {
-                  setIsRegistrationModalOpen(false);
-                  setIsRegSubmitted(false);
-                }}
-                className="absolute right-4 top-4 z-20 p-2 text-gray-400 hover:text-gray-700 dark:hover:text-white rounded-full bg-gray-50 dark:bg-gray-800 transition-colors"
-              >
-                <X className="size-5" />
-              </button>
-
-              {/* Success Screen */}
-              {isRegSubmitted ? (
-                <div className="p-8 text-center flex flex-col items-center justify-center space-y-4">
-                  <div className="size-16 rounded-full bg-teal-50 dark:bg-teal-950/20 text-teal-500 flex items-center justify-center mb-2">
-                    <CheckCircle2 className="size-10" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Đăng ký Hồ sơ Thành công!</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-sm">
-                    Cảm ơn Bác sĩ đã gửi thông tin ứng tuyển tham gia HSAPS. Văn phòng hội sẽ tiếp nhận, tiến hành đối chiếu thông tin chứng chỉ hành nghề với Bộ Y Tế và gửi phản hồi chính thức qua email trong vòng 3-5 ngày làm việc.
-                  </p>
-                  <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-xs text-gray-500 w-full text-left font-mono space-y-1">
-                    <p><span className="font-bold">Mã hồ sơ:</span> {submittedId}</p>
-                    <p><span className="font-bold">Thời gian nhận:</span> {submittedTime}</p>
-                    <p><span className="font-bold">Email hỗ trợ:</span> vanphong@hsaps.org.vn</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setIsRegistrationModalOpen(false);
-                      setIsRegSubmitted(false);
-                    }}
-                    className="mt-6 px-6 py-2.5 bg-primary hover:bg-pink-700 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
-                  >
-                    Hoàn tất & Đóng
-                  </button>
-                </div>
-              ) : (
-                /* Form screen */
-                <form onSubmit={handleRegSubmit} className="flex flex-col max-h-[85vh]">
-                  
-                  <div className="p-6 border-b border-gray-100 dark:border-gray-800 bg-pink-50/30 dark:bg-pink-950/10">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                      <UserPlus className="size-5 text-primary" />
-                      Ứng tuyển Hội viên HSAPS
-                    </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Vui lòng nhập đầy đủ và chính xác thông tin học hàm học vị lâm sàng phục vụ quy trình kiểm duyệt nội bộ.
-                    </p>
-                  </div>
-
-                  <div className="overflow-y-auto p-6 space-y-4 flex-grow">
-                    
-                    {/* Name Input & Title Selector */}
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="col-span-1 space-y-1.5">
-                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400">Chức danh</label>
-                        <select
-                          value={regForm.title}
-                          onChange={(e) => setRegForm({ ...regForm, title: e.target.value })}
-                          className="w-full h-10 px-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent text-sm dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent"
-                        >
-                          <option value="BS" className="dark:bg-gray-900">Bác sĩ (BS)</option>
-                          <option value="ThS.BS" className="dark:bg-gray-900">ThS.BS</option>
-                          <option value="BSCKI" className="dark:bg-gray-900">BSCKI</option>
-                          <option value="BSCKII" className="dark:bg-gray-900">BSCKII</option>
-                          <option value="TS.BS" className="dark:bg-gray-900">TS.BS</option>
-                          <option value="PGS.TS.BS" className="dark:bg-gray-900">PGS.TS.BS</option>
-                        </select>
-                      </div>
-                      <div className="col-span-2 space-y-1.5">
-                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400">Họ và tên bác sĩ</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ví dụ: Nguyễn Văn Hải"
-                          value={regForm.name}
-                          onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
-                          className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent text-sm dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Practice Certificate Number */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400">Số Chứng chỉ hành nghề (CCHN) Bộ Y Tế cấp</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ví dụ: 012345/BYT-CCHN"
-                        value={regForm.cchn}
-                        onChange={(e) => setRegForm({ ...regForm, cchn: e.target.value })}
-                        className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent text-sm dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent font-mono"
-                      />
-                    </div>
-
-                    {/* Contact details */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400">Số điện thoại liên hệ</label>
-                        <input
-                          type="tel"
-                          required
-                          placeholder="09xx.xxx.xxx"
-                          value={regForm.phone}
-                          onChange={(e) => setRegForm({ ...regForm, phone: e.target.value })}
-                          className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent text-sm dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400">Địa chỉ Email</label>
-                        <input
-                          type="email"
-                          required
-                          placeholder="bacsi@example.com"
-                          value={regForm.email}
-                          onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
-                          className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent text-sm dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Workplace Clinic */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400">Cơ sở y tế công tác hiện tại</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ví dụ: Khoa tạo hình thẩm mỹ - Bệnh viện..."
-                        value={regForm.hospital}
-                        onChange={(e) => setRegForm({ ...regForm, hospital: e.target.value })}
-                        className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent text-sm dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent"
-                      />
-                    </div>
-
-                    {/* Specialties */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400">Chuyên ngành phẫu thuật lâm sàng thế mạnh</label>
-                      <input
-                        type="text"
-                        placeholder="Ví dụ: Nâng ngực nội soi, Tạo hình mũi cấu trúc"
-                        value={regForm.specialty}
-                        onChange={(e) => setRegForm({ ...regForm, specialty: e.target.value })}
-                        className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent text-sm dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent"
-                      />
-                    </div>
-
-                    {/* Introduction Message */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400">Thông điệp hoặc đề đạt nguyện vọng gửi Ban chấp hành</label>
-                      <textarea
-                        rows={2}
-                        placeholder="Nội dung khác nếu có..."
-                        value={regForm.message}
-                        onChange={(e) => setRegForm({ ...regForm, message: e.target.value })}
-                        className="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-transparent text-sm dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent resize-none"
-                      />
-                    </div>
-
-                    {/* Terms Checkbox */}
-                    <div className="flex gap-2 items-start mt-2">
-                      <input type="checkbox" required id="reg-terms" className="mt-0.5 rounded text-primary focus:ring-primary" />
-                      <label htmlFor="reg-terms" className="text-[11px] text-gray-500 dark:text-gray-400 leading-normal">
-                        Tôi cam kết mọi thông tin cung cấp bên trên hoàn toàn trùng khớp với bằng cấp lâm sàng và chịu mọi trách nhiệm pháp lý trước Bộ Y Tế & Điều lệ Hội HSAPS.
-                      </label>
-                    </div>
-
-                  </div>
-
-                  {/* Submit bar */}
-                  <div className="bg-gray-50 dark:bg-gray-800/30 px-6 py-4 flex gap-3 justify-end border-t border-gray-100 dark:border-gray-800/60">
-                    <button
-                      type="button"
-                      onClick={() => setIsRegistrationModalOpen(false)}
-                      className="px-5 py-2.5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-bold rounded-lg transition-colors cursor-pointer"
-                    >
-                      Hủy bỏ
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-6 py-2.5 bg-primary hover:bg-pink-700 text-white text-xs font-bold rounded-lg transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <FileText className="size-3.5" />
-                      Gửi Hồ sơ Ứng tuyển
-                    </button>
-                  </div>
-
-                </form>
-              )}
-
-            </motion.div>
+              <UserPlus className="size-4 sm:size-5" />
+              Đăng ký ngay
+            </Link>
+            <Link
+              href="/lien-he"
+              className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-sm sm:text-base font-bold text-white backdrop-blur hover:bg-white/20 transition-all"
+            >
+              <Globe className="size-4 sm:size-5" />
+              Liên hệ tư vấn
+            </Link>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      </section>
 
+      {/* ⑦ FAQ / CONTACT ────────────────────────────────────────────────── */}
+      <section className="py-14 sm:py-16 bg-gray-50/60 dark:bg-[#0d1117]/60 border-t border-gray-100 dark:border-white/[0.06]">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="grid gap-8 md:grid-cols-2">
+            {/* Điều kiện gia nhập */}
+            <div className="rounded-2xl border border-gray-100 dark:border-white/[0.07] bg-white dark:bg-[#161b22] p-6 sm:p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <FileText className="size-5" />
+                </div>
+                <h3 className="text-lg font-bold text-text-main dark:text-white">Điều kiện gia nhập</h3>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  'Là bác sĩ có bằng tốt nghiệp y khoa hợp lệ',
+                  'Có chứng chỉ hành nghề khám chữa bệnh còn hiệu lực',
+                  'Đang hoặc đã hoạt động trong lĩnh vực phẫu thuật thẩm mỹ',
+                  'Cam kết tuân thủ điều lệ và quy tắc đạo đức nghề nghiệp',
+                  'Được ít nhất một hội viên chính thức giới thiệu (khuyến khích)',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-text-secondary dark:text-gray-400">
+                    <Check className="size-4 shrink-0 mt-0.5 text-emerald-500" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Liên hệ */}
+            <div className="rounded-2xl border border-gray-100 dark:border-white/[0.07] bg-white dark:bg-[#161b22] p-6 sm:p-8 flex flex-col gap-5">
+              <div className="flex items-center gap-3 mb-1">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <MessageSquare className="size-5" />
+                </div>
+                <h3 className="text-lg font-bold text-text-main dark:text-white">Cần hỗ trợ?</h3>
+              </div>
+              <p className="text-sm text-text-secondary dark:text-gray-400">
+                Liên hệ trực tiếp với bộ phận hội viên của HSAPS để được hướng dẫn chi tiết về quy trình đăng ký và thẩm định hồ sơ.
+              </p>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2 text-text-secondary dark:text-gray-400">
+                  <Globe className="size-4 text-primary shrink-0" />
+                  <a href="mailto:hoivien@hsaps.org.vn" className="hover:text-primary transition-colors">hoivien@hsaps.org.vn</a>
+                </div>
+                <div className="flex items-center gap-2 text-text-secondary dark:text-gray-400">
+                  <Globe className="size-4 text-primary shrink-0" />
+                  <span>Thứ 2 – Thứ 6: 8:00 – 17:00</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 mt-auto pt-2">
+                <Link
+                  href="/login?tab=register"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white hover:bg-primary-dark transition-colors"
+                >
+                  <UserPlus className="size-4" /> Đăng ký ngay
+                </Link>
+                <Link
+                  href="/lien-he"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-white/10 px-5 py-3 text-sm font-semibold text-text-main dark:text-white hover:border-primary/30 hover:text-primary transition-all"
+                >
+                  Gửi câu hỏi <ExternalLink className="size-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
