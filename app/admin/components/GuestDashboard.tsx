@@ -7,6 +7,7 @@ import {
   HelpCircle, ChevronRight, Stethoscope, Mail, ShieldAlert
 } from 'lucide-react';
 import { getDoctorByEmail } from '@/app/actions/doctor';
+import HcmcSkyline from '@/components/HcmcSkyline';
 
 export default function GuestDashboard({ email, name }: { email: string; name: string }) {
   const [doctorInfo, setDoctorInfo] = useState<any>(null);
@@ -41,6 +42,11 @@ export default function GuestDashboard({ email, name }: { email: string; name: s
       {/* Pending status / Welcome Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-700 to-slate-900 p-8 shadow-xl text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_40%)]" />
+        
+        {/* TP. Hồ Chí Minh Skyline Background */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-32 opacity-25">
+          <HcmcSkyline className="w-full h-full text-white" />
+        </div>
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="size-16 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">

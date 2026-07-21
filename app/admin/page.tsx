@@ -128,6 +128,7 @@ import { useSession } from 'next-auth/react';
 import DoctorDashboard from './components/DoctorDashboard';
 import PartnerDashboard from './components/PartnerDashboard';
 import GuestDashboard from './components/GuestDashboard';
+import HcmcSkyline from '@/components/HcmcSkyline';
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -195,11 +196,16 @@ export default function AdminDashboard() {
 
         {/* ── Welcome Hero ───────────────────────────────────────────────────── */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#ec297b] to-[#9c1ab1] p-8 shadow-xl shadow-pink-500/20">
-          {/* Decorative bubbles */}
+          {/* Decorative bubbles & HCMC Skyline background */}
           <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
           <div className="pointer-events-none absolute bottom-0 left-1/2 h-48 w-48 rounded-full bg-white/5 blur-2xl" />
           <div className="pointer-events-none absolute right-48 top-4 h-20 w-20 rounded-full bg-white/10" />
           <div className="pointer-events-none absolute right-24 bottom-4 h-12 w-12 rounded-full bg-white/15" />
+          
+          {/* TP. Hồ Chí Minh Skyline Background */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-32 opacity-30">
+            <HcmcSkyline className="w-full h-full text-white" />
+          </div>
 
           <div className="relative flex items-center justify-between">
             <div>

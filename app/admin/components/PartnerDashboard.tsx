@@ -7,6 +7,7 @@ import {
   Settings, Award, HelpCircle, ChevronRight, CheckCircle 
 } from 'lucide-react';
 import { getPartnerByEmail } from '@/app/actions/partner';
+import HcmcSkyline from '@/components/HcmcSkyline';
 
 export default function PartnerDashboard({ email, name }: { email: string; name: string }) {
   const [partnerInfo, setPartnerInfo] = useState<any>(null);
@@ -46,6 +47,11 @@ export default function PartnerDashboard({ email, name }: { email: string; name:
       {/* Welcome Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#f59e0b] to-[#ec297b] p-8 shadow-xl shadow-amber-500/10 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_50%)]" />
+        
+        {/* TP. Hồ Chí Minh Skyline Background */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-32 opacity-30">
+          <HcmcSkyline className="w-full h-full text-white" />
+        </div>
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="size-16 rounded-2xl border-2 border-white/20 bg-white flex items-center justify-center text-amber-600 font-black text-2xl shrink-0">

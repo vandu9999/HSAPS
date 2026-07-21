@@ -7,6 +7,7 @@ import {
   Clock, Stethoscope, ChevronRight, Edit3, ArrowUpRight, Check
 } from 'lucide-react';
 import { getDoctorByEmail } from '@/app/actions/doctor';
+import HcmcSkyline from '@/components/HcmcSkyline';
 
 export default function DoctorDashboard({ email, name }: { email: string; name: string }) {
   const [doctorInfo, setDoctorInfo] = useState<any>(null);
@@ -47,6 +48,11 @@ export default function DoctorDashboard({ email, name }: { email: string; name: 
       {/* Welcome Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#ec297b] to-[#7c1ca2] p-8 shadow-xl shadow-pink-500/10 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_50%)]" />
+        
+        {/* TP. Hồ Chí Minh Skyline Background */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-32 opacity-30">
+          <HcmcSkyline className="w-full h-full text-white" />
+        </div>
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="relative size-20 rounded-full border-2 border-white/20 overflow-hidden shrink-0 bg-white/10">
